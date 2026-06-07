@@ -1,0 +1,566 @@
+:root {
+    --verde-bosque: #2E5E3E;
+    --verde-invernadero: #5FA45A;
+    --verde-hoja: #A8C98A;
+    --verde-suave: #D6E9CD;
+    --marron-george: #7A3E1E;
+    --beige-george: #F3C88D;
+    --amarillo-claro: #FFE79A;
+    --naranja-calido: #F28F2B;
+    --rosa-pastel: #FFC1D1;
+    --rosa-fuerte: #E85D75;
+    --blanco-floral: #FFF8E5;
+    --azul-cielo: #CDE6F2;
+    --crema-calido: #FFF2CC;
+    --text-dark: #203525;
+    --shadow-sm: 0 6px 18px rgba(46, 94, 62, 0.08);
+    --shadow-md: 0 14px 34px rgba(46, 94, 62, 0.12);
+    --pastel-fondo: linear-gradient(135deg, #FFF8E5 0%, #D6E9CD 54%, #CDE6F2 100%);
+    --pastel-panel: #FFFCF0;
+    --pastel-verde: #D6E9CD;
+    --pastel-amarillo: #FFE79A;
+    --pastel-azul: #CDE6F2;
+    --pastel-rosa: #FFC1D1;
+}
+
+.produccion-container,
+.produccion-container input,
+.produccion-container button,
+.produccion-container table {
+    font-family: 'Outfit', 'Inter', Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.produccion-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0;
+    color: var(--text-dark);
+}
+
+.produccion-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 22px;
+    padding: 28px 30px;
+    border-radius: 14px;
+    background: var(--pastel-fondo);
+    color: var(--verde-bosque);
+    border: 2px solid rgba(168, 201, 138, 0.72);
+    box-shadow: var(--shadow-md);
+}
+
+.produccion-eyebrow {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--marron-george);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.produccion-hero h2 {
+    margin: 0 0 8px;
+    color: var(--verde-bosque);
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.produccion-hero p {
+    max-width: 620px;
+    margin: 0;
+    color: #4F6B3A;
+    line-height: 1.5;
+}
+
+.btn-refrescar-produccion {
+    flex-shrink: 0;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: var(--marron-george);
+    border: 2px solid var(--beige-george);
+    cursor: pointer;
+    font-weight: 900;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+}
+
+.produccion-metricas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    gap: 16px;
+    margin: 22px 0;
+}
+
+.produccion-metrica-card {
+    min-height: 108px;
+    padding: 18px;
+    border-radius: 12px;
+    background: var(--pastel-panel);
+    border: 1px solid #D6E9CD;
+    border-top: 5px solid var(--pastel-amarillo);
+    box-shadow: var(--shadow-sm);
+}
+
+.produccion-metrica-card span {
+    display: block;
+    margin-bottom: 12px;
+    color: #4F6B3A;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.produccion-metrica-card strong {
+    display: block;
+    color: var(--verde-bosque);
+    font-size: 30px;
+    line-height: 1;
+}
+
+.produccion-metrica-card:nth-child(2) {
+    border-top-color: var(--pastel-verde);
+}
+
+.produccion-metrica-card:nth-child(3) {
+    border-top-color: var(--pastel-azul);
+}
+
+.produccion-metrica-card:nth-child(4) {
+    border-top-color: var(--pastel-rosa);
+}
+
+.formulario-tarjeta,
+.tabla-seccion {
+    background: var(--pastel-panel);
+    border: 1px solid var(--verde-suave);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 22px;
+}
+
+.formulario-header,
+.tabla-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #FFF2CC 0%, #FFE79A 48%, #D6E9CD 100%);
+    border-bottom: 1px solid var(--verde-suave);
+}
+
+.formulario-header span,
+.tabla-header span {
+    display: inline-block;
+    margin-bottom: 5px;
+    color: var(--marron-george);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.formulario-header h3,
+.tabla-header h3 {
+    margin: 0;
+    color: var(--verde-bosque);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.tabla-header {
+    background: linear-gradient(135deg, #D6E9CD 0%, #CDE6F2 100%);
+    border-bottom: 1px solid #A8C98A;
+}
+
+.tabla-header span {
+    color: #A65E2E;
+}
+
+.tabla-header h3 {
+    color: #2E5E3E;
+}
+
+.formulario-header {
+    background: linear-gradient(135deg, #FFE79A 0%, #D6E9CD 100%);
+    border-bottom: 2px solid #A8C98A;
+}
+
+.formulario-header span {
+    color: #7A3E1E;
+}
+
+.formulario-header h3 {
+    color: #2E5E3E;
+    text-shadow: none;
+}
+
+.form-produccion {
+    padding: 24px;
+}
+
+.grid-formulario {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(170px, 1fr));
+    gap: 18px;
+}
+
+.campo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.campo-form label {
+    color: #4F6B3A;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.campo-form input {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid var(--verde-hoja);
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: var(--verde-bosque);
+    font-size: 14px;
+    outline: none;
+}
+
+.campo-form input:focus {
+    border-color: var(--verde-bosque);
+    background: #FFFEF8;
+    box-shadow: 0 0 0 3px rgba(46, 94, 62, 0.10);
+}
+
+.buscador-combo-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-busqueda-planta {
+    width: 100%;
+}
+
+.sugerencias-planta-lista {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 20;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: #FFFFFF;
+    border: 2px solid var(--verde-hoja);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+}
+
+.sugerencias-planta-lista li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 11px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #EDF5E9;
+}
+
+.sugerencias-planta-lista li:hover {
+    background: #FFF2CC;
+}
+
+.sug-planta-nombre {
+    color: var(--verde-bosque);
+    font-weight: 900;
+}
+
+.sug-planta-cientifico {
+    color: var(--marron-george);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.no-sug-planta {
+    color: var(--marron-george);
+    text-align: center;
+    font-style: italic;
+}
+
+.form-acciones {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-submit {
+    width: min(320px, 100%);
+    padding: 13px 18px;
+    border: none;
+    border-radius: 10px;
+    color: var(--verde-bosque);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.btn-guardando {
+    background: linear-gradient(135deg, #BFE3B0 0%, #FFE79A 100%);
+    border: 2px solid #5FA45A;
+    box-shadow: 0 10px 20px rgba(168, 201, 138, 0.24);
+    color: #2E5E3E;
+    text-shadow: none;
+}
+
+.btn-guardando:hover {
+    background: linear-gradient(135deg, #BFE3B0 0%, #FFE79A 100%);
+    border-color: #2E5E3E;
+    color: #203525;
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tabla-produccion {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-produccion th {
+    padding: 14px 18px;
+    background: #D6E9CD;
+    color: var(--verde-bosque);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.tabla-produccion td {
+    padding: 15px 18px;
+    border-bottom: 1px solid #EDF5E9;
+    color: var(--text-dark);
+}
+
+.tabla-produccion tbody tr:hover {
+    background: #FFF2CC;
+}
+
+.txt-nombre-planta {
+    color: var(--verde-bosque);
+    font-weight: 900;
+    text-transform: capitalize;
+}
+
+.badge-cantidad,
+.badge-cosecha {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.badge-cantidad {
+    background: #D6E9CD;
+    color: var(--verde-bosque);
+    border: 1px solid var(--verde-hoja);
+}
+
+.lote-listo {
+    background: #CDE6F2;
+    color: var(--verde-bosque);
+}
+
+.lote-crecimiento {
+    background: #FFF2CC;
+    color: var(--marron-george);
+}
+
+.tabla-vacia {
+    text-align: center;
+    padding: 34px !important;
+    color: #4F6B3A;
+    font-weight: 800;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(79, 107, 58, 0.24);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-contenido {
+    width: 90%;
+    max-width: 420px;
+    padding: 30px;
+    text-align: center;
+    background: linear-gradient(180deg, #FFF8E5 0%, #FFFFFF 100%);
+    border-radius: 16px;
+    border-top: 7px solid;
+    box-shadow: var(--shadow-md);
+    animation: modalEntrance 0.3s ease;
+}
+
+.modal-icono-contenedor {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    margin: 0 auto 18px;
+}
+
+.modal-contenido h3 {
+    margin: 0 0 10px;
+    color: var(--verde-bosque);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.modal-contenido p {
+    margin: 0 0 22px;
+    color: #4F6B3A;
+    line-height: 1.5;
+}
+
+.modal-boton-aceptar {
+    min-width: 150px;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 10px;
+    color: var(--verde-bosque);
+    cursor: pointer;
+    font-weight: 900;
+}
+
+@keyframes modalEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 980px) {
+    .produccion-metricas {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+    }
+
+    .grid-formulario {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
+    .produccion-container {
+        padding: 0;
+    }
+
+    .produccion-hero {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    .btn-refrescar-produccion {
+        width: 100%;
+    }
+
+    .produccion-metricas,
+    .grid-formulario {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-header,
+    .tabla-header,
+    .form-produccion {
+        padding: 16px;
+    }
+
+    .form-acciones {
+        justify-content: stretch;
+    }
+
+    .btn-submit {
+        width: 100%;
+    }
+
+    .tabla-produccion {
+        min-width: 0;
+    }
+
+    .tabla-produccion thead {
+        display: none;
+    }
+
+    .tabla-produccion,
+    .tabla-produccion tbody,
+    .tabla-produccion tr,
+    .tabla-produccion td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .tabla-produccion tr {
+        padding: 12px;
+        border-bottom: 1px solid var(--verde-suave);
+    }
+
+    .tabla-produccion td {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border: none;
+        text-align: right;
+    }
+
+    .tabla-produccion td::before {
+        color: var(--marron-george);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-align: left;
+    }
+
+    .tabla-produccion td:nth-child(1)::before { content: 'Lote'; }
+    .tabla-produccion td:nth-child(2)::before { content: 'Planta'; }
+    .tabla-produccion td:nth-child(3)::before { content: 'Cantidad'; }
+    .tabla-produccion td:nth-child(4)::before { content: 'Siembra'; }
+    .tabla-produccion td:nth-child(5)::before { content: 'Cosecha'; }
+
+    .tabla-vacia {
+        display: block !important;
+        text-align: center !important;
+    }
+
+    .tabla-vacia::before {
+        display: none;
+    }
+}

@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: stock-bloom-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: DB_CLIENT
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: stockbloomdb
+      - key: DB_CONNECTION_LIMIT
+        value: 10
+      - key: DB_SSL
+        value: true
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: RATE_LIMIT_TTL
+        value: 60000
+      - key: RATE_LIMIT_MAX
+        value: 120

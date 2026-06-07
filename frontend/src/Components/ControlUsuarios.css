@@ -1,0 +1,743 @@
+/* ==========================================================================
+   PALETA DE COLORES OFICIAL: George el curioso - Invernadero
+   ========================================================================== */
+:root {
+    /* 1. Colores Base de la Paleta */
+    --verde-bosque: #2E5E3E;
+    --verde-invernadero: #5FA45A;
+    --verde-hoja: #A8C98A;
+    --verde-suave: #D6E9CD;
+    --marron-george: #7A3E1E;
+    --beige-george: #F3C88D;
+    
+    --amarillo-girasol: #FFC93C;
+    --amarillo-claro: #FFE79A;
+    --naranja-calido: #F28F2B;
+    --rosa-coral: #FF7C7C;
+    --rosa-pastel: #FFC1D1;
+    --rosa-fuerte: #E85D75;
+    --blanco-floral: #FFF8E5;
+    --azul-cielo: #CDE6F2;
+    
+    --terracota: #D56B3D;
+    --tierra: #A65E2E;
+    --centro-girasol: #A5521E;
+    --verde-menta: #BFE3B0;
+    --verde-oliva-claro: #9CBF6A;
+    --verde-oliva-oscuro: #4F6B3A;
+    --crema-calido: #FFF2CC;
+    --durazno-suave: #FFD8B1;
+
+    /* 2. Variables de Estructura e Interfaz */
+    --bg-main: var(--blanco-floral);
+    --card-bg: #ffffff;
+    --text-main: var(--verde-oliva-oscuro);
+    --text-body: #2c3e50;
+    
+    --primary: var(--verde-invernadero);
+    --primary-dark: var(--verde-bosque);
+    --primary-light: var(--verde-suave);
+    --secondary: var(--marron-george);
+    
+    --border-color: var(--verde-suave);
+    --radius-lg: 14px;
+    --radius-md: 8px;
+    
+    /* Sombras suaves con tinte verde bosque para integrarse al fondo */
+    --shadow-sm: 0 2px 8px rgba(46, 94, 62, 0.04);
+    --shadow-md: 0 6px 16px rgba(46, 94, 62, 0.07);
+    --shadow-lg: 0 12px 28px rgba(46, 94, 62, 0.12);
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   ESTILOS GENERALES Y CONTENEDOR
+   ========================================================================== */
+.usuarios-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: var(--text-body);
+    background-color: var(--bg-main);
+    min-height: 100vh;
+}
+
+.titulo-seccion {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ==========================================================================
+   1. BARRA DE BÚSQUEDA
+   ========================================================================== */
+.buscador-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 16px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.buscador-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.buscador-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.input-buscador-wrapper {
+    display: flex;
+    gap: 8px;
+    flex-grow: 1;
+    max-width: 500px;
+}
+
+.input-busqueda {
+    flex-grow: 1;
+    padding: 11px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    outline: none;
+    background-color: var(--card-bg);
+    transition: var(--transition);
+}
+
+.input-busqueda:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(95, 164, 90, 0.2);
+}
+
+.btn-buscar-usuario {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 11px 22px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-buscar-usuario:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-cancelar-edicion {
+    background-color: var(--naranja-calido);
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-cancelar-edicion:hover {
+    background-color: var(--centro-girasol);
+}
+
+/* ==========================================================================
+   2. FORMULARIO Y CAMPOS
+   ========================================================================== */
+.formulario-tarjeta {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.formulario-header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    padding: 20px 24px;
+}
+
+.formulario-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.form-usuarios {
+    padding: 24px;
+}
+
+.grid-formulario {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    column-gap: 28px;
+    row-gap: 24px;
+    margin-bottom: 30px;
+}
+
+.campo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.campo-form label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    text-align: left;
+    line-height: 1.2;
+}
+
+.campo-form input,
+.campo-form select {
+    width: 100%;
+    min-height: 56px;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    outline: none;
+    transition: var(--transition);
+    background-color: var(--card-bg);
+    color: var(--text-body);
+}
+
+.campo-form select {
+    cursor: pointer;
+    line-height: 1.35;
+}
+
+.campo-form input:focus,
+.campo-form select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(95, 164, 90, 0.2);
+}
+
+/* ==========================================================================
+   SECCIÓN DE PRIVILEGIOS DE ACCESO
+   ========================================================================== */
+.privilegios-contenedor {
+    background-color: var(--crema-calido);
+    border: 2px dashed var(--beige-george);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.privilegios-titulo {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--marron-george);
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.privilegios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.checkbox-card {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    background-color: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.checkbox-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkbox-custom-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.checkbox-icon {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+/* Tarjeta de Privilegio Seleccionada */
+.checkbox-card:has(input:checked) {
+    background-color: var(--primary-light);
+    border-color: var(--verde-invernadero);
+    box-shadow: 0 2px 8px rgba(95, 164, 90, 0.12);
+}
+
+.checkbox-card:has(input:checked) .checkbox-icon {
+    transform: scale(1.25);
+}
+
+.checkbox-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   BOTONES DE ACCIÓN DE FORMULARIO
+   ========================================================================== */
+.form-acciones {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.btn-submit {
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-guardando {
+    background-color: var(--primary);
+}
+
+.btn-guardando:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-editando {
+    background-color: var(--secondary);
+}
+
+.btn-editando:hover {
+    background-color: var(--tierra);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-cancelar-secundario {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-cancelar-secundario:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary);
+}
+
+/* ==========================================================================
+   3. TABLA DE EXISTENCIAS
+   ========================================================================== */
+.tabla-seccion {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.tabla-header {
+    background-color: var(--card-bg);
+    padding: 20px 24px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tabla-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13.5px;
+}
+
+.tabla-usuarios th {
+    background-color: #fafdfa;
+    color: var(--text-main);
+    font-weight: 700;
+    padding: 14px 18px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tabla-usuarios td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.tabla-usuarios tbody tr:hover {
+    background-color: #f7faf7;
+}
+
+.txt-nombre-completo {
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.txt-contrasena {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--marron-george);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* BADGES DE ROL */
+.badge-rol {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.rol-admin {
+    background-color: var(--rosa-pastel);
+    color: var(--rosa-fuerte);
+    border: 1px solid var(--rosa-coral);
+}
+
+.rol-empleado {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid var(--verde-hoja);
+}
+
+/* ACCIONES DE FILA */
+.btn-editar-fila {
+    background-color: transparent;
+    color: var(--marron-george);
+    border: 2px solid var(--beige-george);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-editar-fila:hover {
+    background-color: var(--marron-george);
+    color: white;
+    border-color: var(--marron-george);
+}
+
+.acciones-usuario {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.btn-eliminar-usuario {
+    background-color: var(--rosa-pastel);
+    color: #8f1f35;
+    border: 2px solid var(--rosa-coral);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-eliminar-usuario:hover {
+    background-color: var(--rosa-fuerte);
+    color: white;
+    border-color: var(--rosa-fuerte);
+}
+
+.ventas-empleados-seccion {
+    margin-top: 24px;
+}
+
+.ventas-empleados-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.ventas-empleados-header h3 {
+    margin: 0 0 4px;
+}
+
+.ventas-empleados-header span {
+    display: block;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ventas-empleados-filtros {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.ventas-empleados-filtros input,
+.ventas-empleados-filtros select,
+.ventas-empleados-filtros button {
+    min-height: 38px;
+    border-radius: 8px;
+    font-weight: 800;
+}
+
+.ventas-empleados-filtros input,
+.ventas-empleados-filtros select {
+    border: 1px solid var(--verde-hoja);
+    padding: 0 10px;
+    background: #fffdf7;
+    color: var(--primary-dark);
+}
+
+.ventas-empleados-filtros button {
+    border: none;
+    padding: 0 14px;
+    background: var(--primary-dark);
+    color: #fff;
+    cursor: pointer;
+}
+
+.ventas-empleados-filtros button:disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+}
+
+.ventas-empleados-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 18px 20px 0;
+}
+
+.ventas-empleados-resumen div {
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    border: 1px solid var(--verde-hoja);
+}
+
+.ventas-empleados-resumen span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.ventas-empleados-resumen strong {
+    color: var(--primary-dark);
+    font-size: 24px;
+}
+
+.tabla-ventas-empleados {
+    margin-top: 18px;
+}
+
+.btn-pdf-empleado {
+    min-height: 34px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-dark);
+    color: #fff;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.btn-pdf-empleado:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.modal-confirmar-usuario {
+    border-top-color: var(--rosa-fuerte);
+}
+
+.modal-icono-alerta {
+    background: var(--rosa-pastel);
+    color: var(--rosa-fuerte);
+    font-weight: 900;
+}
+
+.modal-confirmar-usuario strong {
+    color: var(--primary-dark);
+}
+
+.modal-acciones-confirmacion {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-boton-cancelar,
+.modal-boton-eliminar {
+    min-width: 120px;
+    border: none;
+    padding: 11px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.modal-boton-cancelar {
+    background: #fffaf0;
+    color: var(--marron-george);
+    border: 1px solid var(--beige-george);
+}
+
+.modal-boton-eliminar {
+    background: var(--rosa-fuerte);
+    color: #fff;
+}
+
+.tabla-vacia {
+    text-align: center;
+    color: var(--text-main);
+    padding: 36px !important;
+}
+
+/* ==========================================================================
+   4. MODAL CORPORATIVO FLOTANTE
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(46, 94, 62, 0.3);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-contenido {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    border-top: 6px solid; /* El color del borde lo inyecta dinámicamente el JS */
+    animation: modalEntrance 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-icono-contenedor {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    margin: 0 auto 18px auto;
+}
+
+.modal-contenido h3 {
+    margin: 0 0 10px 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.modal-contenido p {
+    font-size: 14.5px;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+}
+
+.modal-boton-aceptar {
+    color: white;
+    border: none;
+    padding: 10px 32px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.modal-boton-aceptar:hover {
+    filter: brightness(0.9) translateY(-1px);
+}
+
+@keyframes modalEntrance {
+    from {
+        opacity: 0;
+        transform: scale(0.85) translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+.formulario-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff !important; /* <--- Agrega esta línea para forzar el color blanco */
+}

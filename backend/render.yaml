@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: stock-bloom-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_SSL
+        value: false
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: RATE_LIMIT_TTL
+        value: 60000
+      - key: RATE_LIMIT_MAX
+        value: 120
