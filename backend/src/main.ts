@@ -6,12 +6,11 @@ import './config/env';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const corsOrigin = process.env.CORS_ORIGIN || '*';
 
   app.use(helmet());
   app.enableCors({
-    origin: process.env.CORS_ORIGIN
-      ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
-      : '*',
+    origin: corsOrigin === '*' ? '*' : corsOrigin.split(',').map((origin) => origin.trim()),
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
