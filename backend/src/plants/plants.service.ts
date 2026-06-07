@@ -9,7 +9,7 @@ export class PlantsService {
   constructor(private readonly db: DatabaseService) {}
 
   private escapeIdentifier(identifier: string) {
-    return `\`${identifier.replace(/`/g, '``')}\``;
+    return this.db.escapeIdentifier(identifier);
   }
 
   private async getCategoryColumn() {

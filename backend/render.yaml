@@ -4,22 +4,18 @@ services:
     env: node
     plan: free
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: npm run start:prod
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: 3306
-      - key: DB_USER
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_NAME
+      - key: DB_CLIENT
+        value: postgres
+      - key: DATABASE_URL
         sync: false
       - key: DB_SSL
-        value: false
+        value: true
+      - key: DB_CONNECTION_LIMIT
+        value: 10
       - key: CORS_ORIGIN
         value: "*"
       - key: BCRYPT_ROUNDS

@@ -40,7 +40,7 @@ export class AuthService {
   constructor(private readonly db: DatabaseService) {}
 
   private escapeIdentifier(identifier: string) {
-    return `\`${identifier.replace(/`/g, '``')}\``;
+    return this.db.escapeIdentifier(identifier);
   }
 
   private async getPasswordColumn() {
@@ -68,7 +68,11 @@ export class AuthService {
     const hasActiveColumn = columns.some((column) => String(column.Field).toLowerCase() === 'activo');
 
     if (!hasActiveColumn) {
-      await this.db.query('ALTER TABLE usuario ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1');
+      await this.db.query(
+        this.db.isPostgres()
+          ? 'ALTER TABLE usuario ADD COLUMN activo BOOLEAN NOT NULL DEFAULT TRUE'
+          : 'ALTER TABLE usuario ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1',
+      );
     }
 
     this.activeColumnChecked = true;
@@ -270,10 +274,9 @@ export class AuthService {
       return { success: false, error: 'El usuario no existe o ya fue eliminado.' };
     }
 
-    await this.db.query(
-      'UPDATE usuario SET activo = 0, telefono = CONCAT("DEL", id_usuario) WHERE id_usuario = ?',
-      [idUsuario],
-    );
+    await this.db.query('UPDATE usuario SET activo = 0, telefono = CONCAT("DEL", id_usuario) WHERE id_usuario = ?', [
+      idUsuario,
+    ]);
 
     return { success: true, mensaje: 'Usuario eliminado correctamente. Sus ventas historicas se conservaron para reportes.' };
   }

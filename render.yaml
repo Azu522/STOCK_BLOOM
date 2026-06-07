@@ -7,17 +7,9 @@ services:
     startCommand: npm run start:prod
     envVars:
       - key: DB_CLIENT
-        value: mysql
-      - key: DB_HOST
+        value: postgres
+      - key: DATABASE_URL
         sync: false
-      - key: DB_PORT
-        value: 3306
-      - key: DB_USER
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_NAME
-        value: stockbloomdb
       - key: DB_CONNECTION_LIMIT
         value: 10
       - key: DB_SSL
