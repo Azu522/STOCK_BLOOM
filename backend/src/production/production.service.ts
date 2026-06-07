@@ -7,6 +7,8 @@ export class ProductionService implements OnModuleInit {
   constructor(private readonly db: DatabaseService) {}
 
   async onModuleInit() {
+    await this.db.ensureSchema();
+
     await this.db.query(`
       CREATE TABLE IF NOT EXISTS produccion (
         id_produccion INT AUTO_INCREMENT PRIMARY KEY,
