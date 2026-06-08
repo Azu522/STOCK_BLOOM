@@ -177,6 +177,26 @@ guardarVenta: async (ventaData) => {
         return result;
     },
     // AGREGADO: Módulo de Reportes
+    actualizarProduccion: async (id_produccion, data) => {
+        const response = await fetch(`${BASE_URL}/produccion/${id_produccion}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result?.success) notificarCambioDatos('produccion');
+        return result;
+    },
+
+    eliminarProduccion: async (id_produccion) => {
+        const response = await fetch(`${BASE_URL}/produccion/${id_produccion}`, {
+            method: 'DELETE'
+        });
+        const result = await response.json();
+        if (result?.success) notificarCambioDatos('produccion');
+        return result;
+    },
+
     obtenerReporte: async (tipo, filtros = {}) => {
         const params = new URLSearchParams();
         Object.entries(filtros).forEach(([key, value]) => {

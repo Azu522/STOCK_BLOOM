@@ -388,6 +388,50 @@
     color: var(--marron-george);
 }
 
+.acciones-produccion {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.btn-editar-produccion,
+.btn-eliminar-produccion,
+.btn-cancelar-produccion {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-editar-produccion {
+    background: #D6E9CD;
+    color: var(--verde-bosque);
+    border: 1px solid var(--verde-hoja);
+}
+
+.btn-eliminar-produccion {
+    background: #FFD3DA;
+    color: #9D1F35;
+    border: 1px solid #FF9CAD;
+}
+
+.btn-cancelar-produccion {
+    background: #FFF8E5;
+    color: var(--marron-george);
+    border: 1px solid #D8BF79;
+}
+
+.btn-editar-produccion:hover,
+.btn-eliminar-produccion:hover,
+.btn-cancelar-produccion:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
 .tabla-vacia {
     text-align: center;
     padding: 34px !important;
@@ -504,6 +548,7 @@
 
     .form-acciones {
         justify-content: stretch;
+        flex-direction: column;
     }
 
     .btn-submit {
@@ -554,6 +599,11 @@
     .tabla-produccion td:nth-child(3)::before { content: 'Cantidad'; }
     .tabla-produccion td:nth-child(4)::before { content: 'Siembra'; }
     .tabla-produccion td:nth-child(5)::before { content: 'Cosecha'; }
+    .tabla-produccion td:nth-child(6)::before { content: 'Accion'; }
+
+    .acciones-produccion {
+        justify-content: flex-end;
+    }
 
     .tabla-vacia {
         display: block !important;

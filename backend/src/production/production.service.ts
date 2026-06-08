@@ -31,6 +31,37 @@ export class ProductionService implements OnModuleInit {
     return { success: true, message: 'Lote registrado correctamente' };
   }
 
+  async actualizarProduccion(idProduccion: string, payload: CreateProductionDto) {
+    const [rows] = await this.db.query('SELECT id_produccion FROM produccion WHERE id_produccion = ? LIMIT 1', [
+      idProduccion,
+    ]);
+
+    if (rows.length === 0) {
+      return { success: false, error: 'El lote de produccion no existe.' };
+    }
+
+    await this.db.query(
+      'UPDATE produccion SET id_planta = ?, cantidad = ?, fecha_siembra = ?, fecha_cosecha = ? WHERE id_produccion = ?',
+      [payload.id_planta, payload.cantidad, payload.fecha_siembra, payload.fecha_cosecha || null, idProduccion],
+    );
+
+    return { success: true, message: 'Lote actualizado correctamente' };
+  }
+
+  async eliminarProduccion(idProduccion: string) {
+    const [rows] = await this.db.query('SELECT id_produccion FROM produccion WHERE id_produccion = ? LIMIT 1', [
+      idProduccion,
+    ]);
+
+    if (rows.length === 0) {
+      return { success: false, error: 'El lote de produccion no existe.' };
+    }
+
+    await this.db.query('DELETE FROM produccion WHERE id_produccion = ?', [idProduccion]);
+
+    return { success: true, message: 'Lote eliminado correctamente' };
+  }
+
   async listarProduccion() {
     const [rows] = await this.db.query(`
       SELECT p.*, pl.nombre_comun
