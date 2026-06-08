@@ -326,13 +326,13 @@ export const PuntodeVenta = ({ user }) => {
                                 className={`btn-modo ${modoVenta === 'menudeo' ? 'active' : ''}`} 
                                 onClick={() => setModoVenta('menudeo')}
                             >
-                                Menudeo
+                                🪴 Menudeo
                             </button>
                             <button 
                                 className={`btn-modo ${modoVenta === 'mayoreo' ? 'active' : ''}`} 
                                 onClick={() => setModoVenta('mayoreo')}
                             >
-                                Mayoreo
+                                📦 Mayoreo
                             </button>
                         </div>
                         <div className="indicador-modo">
