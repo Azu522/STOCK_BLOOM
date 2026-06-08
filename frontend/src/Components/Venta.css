@@ -342,6 +342,25 @@
     box-shadow: 0 0 0 3px rgba(95, 164, 90, 0.15);
 }
 
+.select-modo-item {
+    min-width: 118px;
+    padding: 8px 10px;
+    border: 2px solid var(--verde-hoja);
+    border-radius: 8px;
+    background: var(--blanco-floral);
+    color: var(--verde-bosque);
+    font-weight: 800;
+    cursor: pointer;
+    outline: none;
+    transition: var(--transition);
+}
+
+.select-modo-item:focus,
+.select-modo-item:hover {
+    border-color: var(--verde-bosque);
+    box-shadow: 0 0 0 3px rgba(95, 164, 90, 0.15);
+}
+
 .item-subtotal {
     font-weight: 700;
     color: var(--verde-bosque);
@@ -906,10 +925,11 @@ div.venta-main div.ticket-header img.logo-ticket-forced {
     }
 
     .tabla-venta td:nth-child(1)::before { content: 'Planta'; }
-    .tabla-venta td:nth-child(2)::before { content: 'Cantidad'; }
-    .tabla-venta td:nth-child(3)::before { content: 'Precio'; }
-    .tabla-venta td:nth-child(4)::before { content: 'Subtotal'; }
-    .tabla-venta td:nth-child(5)::before { content: 'Quitar'; }
+    .tabla-venta td:nth-child(2)::before { content: 'Tipo'; }
+    .tabla-venta td:nth-child(3)::before { content: 'Cantidad'; }
+    .tabla-venta td:nth-child(4)::before { content: 'Precio'; }
+    .tabla-venta td:nth-child(5)::before { content: 'Subtotal'; }
+    .tabla-venta td:nth-child(6)::before { content: 'Quitar'; }
 
     .tabla-venta td.item-nombre {
         display: block;
@@ -925,6 +945,11 @@ div.venta-main div.ticket-header img.logo-ticket-forced {
 
     .input-cantidad {
         width: 86px;
+    }
+
+    .select-modo-item {
+        width: 140px;
+        max-width: 55%;
     }
 
     .btn-eliminar {

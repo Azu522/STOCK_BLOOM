@@ -97,6 +97,12 @@ export const PuntodeVenta = ({ user }) => {
             : planta.id;
     };
 
+    const obtenerPrecioPorModo = (planta, modo) => {
+        return modo === 'menudeo'
+            ? parseFloat(planta.precio_menudeo) || 0
+            : parseFloat(planta.precio_mayoreo) || 0;
+    };
+
     // Agregar planta al carrito
     const agregarAlCarrito = (planta) => {
         const plantaId = obtenerIdPlanta(planta);
@@ -110,11 +116,11 @@ export const PuntodeVenta = ({ user }) => {
             return;
         }
 
-        const precioUnitario = modoVenta === 'menudeo' 
-            ? parseFloat(planta.precio_menudeo) || 0 
-            : parseFloat(planta.precio_mayoreo) || 0;
+        const precioUnitario = obtenerPrecioPorModo(planta, modoVenta);
 
-        const existenteIndex = carrito.findIndex(item => String(obtenerIdPlanta(item)) === String(plantaId));
+        const existenteIndex = carrito.findIndex(item =>
+            String(obtenerIdPlanta(item)) === String(plantaId) && item.modo_venta === modoVenta
+        );
 
         if (existenteIndex !== -1) {
             // Incrementar cantidad de manera inmutable (sin mutar el estado)
@@ -125,6 +131,8 @@ export const PuntodeVenta = ({ user }) => {
                         ...item, 
                         ...planta,
                         id_planta: plantaId,
+                        modo_venta: modoVenta,
+                        precio_unitario: precioUnitario,
                         cantidad: nuevaCantidad, 
                         subtotal: nuevaCantidad * precioUnitario 
                     };
@@ -139,6 +147,7 @@ export const PuntodeVenta = ({ user }) => {
                 { 
                     ...planta, 
                     id_planta: plantaId, 
+                    modo_venta: modoVenta,
                     cantidad: 1, 
                     precio_unitario: precioUnitario, 
                     subtotal: precioUnitario 
@@ -160,6 +169,21 @@ export const PuntodeVenta = ({ user }) => {
                 };
             }
             return item;
+        });
+        setCarrito(nuevoCarrito);
+    };
+
+    const cambiarModoItem = (index, nuevoModo) => {
+        const nuevoCarrito = carrito.map((item, idx) => {
+            if (idx !== index) return item;
+
+            const precioUnitario = obtenerPrecioPorModo(item, nuevoModo);
+            return {
+                ...item,
+                modo_venta: nuevoModo,
+                precio_unitario: precioUnitario,
+                subtotal: item.cantidad * precioUnitario
+            };
         });
         setCarrito(nuevoCarrito);
     };
@@ -372,6 +396,7 @@ export const PuntodeVenta = ({ user }) => {
                             <thead>
                                 <tr>
                                     <th>Planta</th>
+                                    <th>Tipo</th>
                                     <th style={{ width: '90px' }}>Cant.</th>
                                     <th>Precio</th>
                                     <th>Subtotal</th>
@@ -385,6 +410,16 @@ export const PuntodeVenta = ({ user }) => {
                                             <td className="item-nombre">
                                                 {item.nombre_comun}
                                                 {item.nombre_cientifico && <small className="txt-secundario">{item.nombre_cientifico}</small>}
+                                            </td>
+                                            <td>
+                                                <select
+                                                    className="select-modo-item"
+                                                    value={item.modo_venta || 'menudeo'}
+                                                    onChange={(e) => cambiarModoItem(index, e.target.value)}
+                                                >
+                                                    <option value="menudeo">🪴 Menudeo</option>
+                                                    <option value="mayoreo">📦 Mayoreo</option>
+                                                </select>
                                             </td>
                                             <td>
                                                 <input 
@@ -406,7 +441,7 @@ export const PuntodeVenta = ({ user }) => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" className="carrito-vacio-msg">
+                                        <td colSpan="6" className="carrito-vacio-msg">
                                             🛒 El carrito está vacío. Agrega plantas para cobrar.
                                         </td>
                                     </tr>
@@ -579,7 +614,9 @@ export const PuntodeVenta = ({ user }) => {
                                         </div>
                                         <div className="item-fila-secundaria">
                                             <span className="col-cant"></span>
-                                            <span className="col-desc-precio">P. Unit: ${item.precio_unitario.toFixed(2)}</span>
+                                            <span className="col-desc-precio">
+                                                P. Unit: ${item.precio_unitario.toFixed(2)} · {(item.modo_venta || 'menudeo').toUpperCase()}
+                                            </span>
                                             <span className="col-sub"></span>
                                         </div>
                                     </div>
