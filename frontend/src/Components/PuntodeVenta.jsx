@@ -10,6 +10,7 @@ const formatearFechaLocal = (fecha = new Date()) => {
 
 export const PuntodeVenta = ({ user }) => {
     const [busqueda, setBusqueda] = useState('');
+    const [indiceSugerencia, setIndiceSugerencia] = useState(-1);
     const [plantas, setPlantas] = useState([]);
     const [carrito, setCarrito] = useState([]);
     const [modoVenta, setModoVenta] = useState('menudeo');
@@ -72,6 +73,16 @@ export const PuntodeVenta = ({ user }) => {
             p.nombre_cientifico?.toLowerCase().includes(busqueda.toLowerCase())
         );
     }, [busqueda, plantas]);
+
+    useEffect(() => {
+        setIndiceSugerencia(sugerencias.length > 0 ? 0 : -1);
+    }, [sugerencias.length, busqueda]);
+
+    useEffect(() => {
+        document
+            .querySelector('.venta-main .dropdown-lista .dropdown-item-activo')
+            ?.scrollIntoView({ block: 'nearest' });
+    }, [indiceSugerencia]);
 
     // Calcular el total general de la compra
     const totalGeneral = useMemo(() => 
@@ -155,6 +166,32 @@ export const PuntodeVenta = ({ user }) => {
             ]);
         }
         setBusqueda('');
+        setIndiceSugerencia(-1);
+    };
+
+    const manejarTeclaBusqueda = (e) => {
+        if (!busqueda.trim() || sugerencias.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setIndiceSugerencia(prev => (prev + 1) % sugerencias.length);
+        }
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setIndiceSugerencia(prev => (prev <= 0 ? sugerencias.length - 1 : prev - 1));
+        }
+
+        if (e.key === 'Enter' && indiceSugerencia >= 0) {
+            e.preventDefault();
+            agregarAlCarrito(sugerencias[indiceSugerencia]);
+        }
+
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            setBusqueda('');
+            setIndiceSugerencia(-1);
+        }
     };
 
     // Cambiar la cantidad manualmente en la tabla
@@ -368,16 +405,22 @@ export const PuntodeVenta = ({ user }) => {
                         <input 
                             className="input-busqueda" 
                             value={busqueda} 
-                            onChange={(e) => setBusqueda(e.target.value)} 
+                            onChange={(e) => setBusqueda(e.target.value)}
+                            onKeyDown={manejarTeclaBusqueda}
                             placeholder="🔍 Buscar planta por nombre..." 
                         />
                         {busqueda && (
                             <ul className="dropdown-lista">
                                 {sugerencias.length > 0 ? (
-                                    sugerencias.map(p => {
+                                    sugerencias.map((p, index) => {
                                         const precio = modoVenta === 'menudeo' ? p.precio_menudeo : p.precio_mayoreo;
                                         return (
-                                            <li key={obtenerIdPlanta(p)} onClick={() => agregarAlCarrito(p)}>
+                                            <li
+                                                key={obtenerIdPlanta(p)}
+                                                className={index === indiceSugerencia ? 'dropdown-item-activo' : ''}
+                                                onMouseEnter={() => setIndiceSugerencia(index)}
+                                                onClick={() => agregarAlCarrito(p)}
+                                            >
                                                 <span className="sug-nombre">{p.nombre_comun}</span>
                                                 {p.nombre_cientifico && <span className="sug-cientifico">({p.nombre_cientifico})</span>}
                                                 <span className="sug-precio">${parseFloat(precio).toFixed(2)}</span>

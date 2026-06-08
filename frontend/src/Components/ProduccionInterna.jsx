@@ -12,6 +12,7 @@ export const ProduccionInterna = () => {
     // --- 🔍 ESTADOS PARA EL BUSCADOR DE PLANTAS INTERACTIVO ---
     const [busquedaPlanta, setBusquedaPlanta] = useState('');
     const [mostrarDropdown, setMostrarDropdown] = useState(false);
+    const [indiceSugerenciaPlanta, setIndiceSugerenciaPlanta] = useState(-1);
 
     // --- 🎯 ESTADO DEL MODAL CORPORATIVO DINÁMICO ---
     const [modalConfig, setModalConfig] = useState({
@@ -115,6 +116,16 @@ export const ProduccionInterna = () => {
         );
     }, [busquedaPlanta, plantas]);
 
+    useEffect(() => {
+        setIndiceSugerenciaPlanta(sugerenciasPlanta.length > 0 ? 0 : -1);
+    }, [sugerenciasPlanta.length, busquedaPlanta]);
+
+    useEffect(() => {
+        document
+            .querySelector('.produccion-container .sugerencias-planta-lista .dropdown-item-activo')
+            ?.scrollIntoView({ block: 'nearest' });
+    }, [indiceSugerenciaPlanta]);
+
     const resumenProduccion = useMemo(() => {
         const totalLotes = lotes.length;
         const totalPiezas = lotes.reduce((sum, lote) => sum + (parseInt(lote.cantidad) || 0), 0);
@@ -128,6 +139,7 @@ export const ProduccionInterna = () => {
         setForm(prev => ({ ...prev, id_planta: planta.id_planta }));
         setBusquedaPlanta(planta.nombre_comun);
         setMostrarDropdown(false);
+        setIndiceSugerenciaPlanta(-1);
     };
 
     const manejarCambioBusqueda = (e) => {
@@ -135,6 +147,31 @@ export const ProduccionInterna = () => {
         setBusquedaPlanta(valor);
         setForm(prev => ({ ...prev, id_planta: '' })); // Resetea la planta si borra o cambia el texto
         setMostrarDropdown(true);
+    };
+
+    const manejarTeclaBusquedaPlanta = (event) => {
+        if (!mostrarDropdown || sugerenciasPlanta.length === 0) return;
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setIndiceSugerenciaPlanta(prev => (prev + 1) % sugerenciasPlanta.length);
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            setIndiceSugerenciaPlanta(prev => (prev <= 0 ? sugerenciasPlanta.length - 1 : prev - 1));
+        }
+
+        if (event.key === 'Enter' && indiceSugerenciaPlanta >= 0) {
+            event.preventDefault();
+            seleccionarPlanta(sugerenciasPlanta[indiceSugerenciaPlanta]);
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            setMostrarDropdown(false);
+            setIndiceSugerenciaPlanta(-1);
+        }
     };
 
     const guardarLote = async (e) => {
@@ -313,6 +350,7 @@ export const ProduccionInterna = () => {
                                     placeholder="Escribe el nombre de la planta..." 
                                     value={busquedaPlanta}
                                     onChange={manejarCambioBusqueda}
+                                    onKeyDown={manejarTeclaBusquedaPlanta}
                                     onFocus={() => setMostrarDropdown(true)}
                                     required
                                 />
@@ -321,8 +359,13 @@ export const ProduccionInterna = () => {
                                 {mostrarDropdown && (
                                     <ul className="sugerencias-planta-lista">
                                         {sugerenciasPlanta.length > 0 ? (
-                                            sugerenciasPlanta.map(p => (
-                                                <li key={p.id_planta} onClick={() => seleccionarPlanta(p)}>
+                                            sugerenciasPlanta.map((p, index) => (
+                                                <li
+                                                    key={p.id_planta}
+                                                    className={index === indiceSugerenciaPlanta ? 'dropdown-item-activo' : ''}
+                                                    onMouseEnter={() => setIndiceSugerenciaPlanta(index)}
+                                                    onClick={() => seleccionarPlanta(p)}
+                                                >
                                                     <span className="sug-planta-nombre">{p.nombre_comun}</span>
                                                     {p.nombre_cientifico && (
                                                         <span className="sug-planta-cientifico">({p.nombre_cientifico})</span>
@@ -450,7 +493,7 @@ export const ProduccionInterna = () => {
                         <div className="modal-icono-contenedor modal-icono-alerta-produccion">!</div>
                         <h3>Eliminar lote</h3>
                         <p>
-                            Deseas eliminar el lote <strong>#{loteAEliminar.id_produccion}</strong>
+                            ¿Deseas eliminar el lote <strong>#{loteAEliminar.id_produccion}</strong>
                             {loteAEliminar.nombre_comun ? ` de ${loteAEliminar.nombre_comun}` : ''}? Esta accion no se puede deshacer.
                         </p>
                         <div className="modal-acciones-confirmacion">

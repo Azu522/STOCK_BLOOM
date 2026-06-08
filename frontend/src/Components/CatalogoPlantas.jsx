@@ -5,6 +5,7 @@ import { ApiStockBloom } from '../Service/ApiStockBloom';
 export const CatalogoPlantas = () => {
     const [plantas, setPlants] = useState([]);
     const [busqueda, setBusqueda] = useState('');
+    const [indiceSugerencia, setIndiceSugerencia] = useState(-1);
     const [plantaAEliminar, setPlantaAEliminar] = useState(null);
     const formularioRef = useRef(null);
     const nombreComunInputRef = useRef(null);
@@ -73,6 +74,16 @@ export const CatalogoPlantas = () => {
         );
     }, [busqueda, plantas]);
 
+    useEffect(() => {
+        setIndiceSugerencia(sugerencias.length > 0 ? 0 : -1);
+    }, [sugerencias.length, busqueda]);
+
+    useEffect(() => {
+        document
+            .querySelector('.catalogo-main .dropdown-lista .dropdown-item-activo')
+            ?.scrollIntoView({ block: 'nearest' });
+    }, [indiceSugerencia]);
+
     const plantasBajoStock = useMemo(() => {
         return plantas.filter(p => (parseInt(p.stock) || 0) <= 30);
     }, [plantas]);
@@ -91,11 +102,37 @@ export const CatalogoPlantas = () => {
             descripcion: planta.descripcion || ''
         });
         setBusqueda('');
+        setIndiceSugerencia(-1);
 
         requestAnimationFrame(() => {
             formularioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             nombreComunInputRef.current?.focus({ preventScroll: true });
         });
+    };
+
+    const manejarTeclaBusqueda = (event) => {
+        if (!busqueda.trim() || sugerencias.length === 0) return;
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setIndiceSugerencia(prev => (prev + 1) % sugerencias.length);
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            setIndiceSugerencia(prev => (prev <= 0 ? sugerencias.length - 1 : prev - 1));
+        }
+
+        if (event.key === 'Enter' && indiceSugerencia >= 0) {
+            event.preventDefault();
+            seleccionarPlantaParaEditar(sugerencias[indiceSugerencia]);
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            setBusqueda('');
+            setIndiceSugerencia(-1);
+        }
     };
 
     const solicitarEliminarPlanta = (planta) => {
@@ -293,12 +330,18 @@ export const CatalogoPlantas = () => {
                             placeholder="Escribe el nombre de la planta a buscar..."
                             value={busqueda}
                             onChange={(e) => setBusqueda(e.target.value)}
+                            onKeyDown={manejarTeclaBusqueda}
                         />
                         {busqueda && (
                             <ul className="dropdown-lista">
                                 {sugerencias.length > 0 ? (
-                                    sugerencias.map((p) => (
-                                        <li key={p.id_planta} onClick={() => seleccionarPlantaParaEditar(p)}>
+                                    sugerencias.map((p, index) => (
+                                        <li
+                                            key={p.id_planta}
+                                            className={index === indiceSugerencia ? 'dropdown-item-activo' : ''}
+                                            onMouseEnter={() => setIndiceSugerencia(index)}
+                                            onClick={() => seleccionarPlantaParaEditar(p)}
+                                        >
                                             <span className="sug-nombre">{p.nombre_comun}</span>
                                             {p.nombre_cientifico && <span className="sug-cientifico">({p.nombre_cientifico})</span>}
                                             <span className="sug-stock">Stock: {p.stock || 0} pzas</span>
@@ -519,7 +562,7 @@ export const CatalogoPlantas = () => {
                         <div className="modal-icono-contenedor eliminar-icono">X</div>
                         <h3>🗑️ Eliminar planta</h3>
                         <p>
-                            Deseas eliminar la planta <strong>{plantaAEliminar.nombre_comun}</strong> del catalogo?
+                            ¿Deseas eliminar la planta <strong>{plantaAEliminar.nombre_comun}</strong> del catalogo?
                         </p>
                         <div className="modal-acciones-eliminar">
                             <button

@@ -186,6 +186,35 @@
     background: #FFF2CC;
 }
 
+.buscador-seccion .dropdown-lista li.dropdown-item-activo {
+    background: #FFF2CC;
+    box-shadow: inset 4px 0 0 var(--verde-bosque);
+}
+
+.buscador-seccion .dropdown-lista {
+    scrollbar-width: thin;
+    scrollbar-color: #6F756F #173E26;
+}
+
+.buscador-seccion .dropdown-lista::-webkit-scrollbar {
+    width: 13px;
+}
+
+.buscador-seccion .dropdown-lista::-webkit-scrollbar-track {
+    background: #173E26;
+    border-radius: 10px;
+}
+
+.buscador-seccion .dropdown-lista::-webkit-scrollbar-thumb {
+    background: #6F756F;
+    border: 3px solid #173E26;
+    border-radius: 10px;
+}
+
+.buscador-seccion .dropdown-lista::-webkit-scrollbar-thumb:hover {
+    background: #909990;
+}
+
 .buscador-seccion .sug-nombre {
     color: var(--verde-bosque);
     font-weight: 900;
