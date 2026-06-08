@@ -169,6 +169,8 @@ export class AuthService {
     const nombresPermiso = await this.obtenerNombresPermiso(Number(usuario.id_usuario));
     return {
       ...safeUser,
+      apellidoP: safeUser.apellidoP ?? safeUser.apellidop ?? '',
+      apellidoM: safeUser.apellidoM ?? safeUser.apellidom ?? '',
       privilegios: this.permisosAPrivilegios(nombresPermiso, usuario.rol),
     };
   }

@@ -8,6 +8,9 @@ const obtenerFechaLocal = () => {
     return local.toISOString().slice(0, 10);
 };
 
+const obtenerApellidoP = (usuario) => usuario?.apellidoP ?? usuario?.apellidop ?? usuario?.apellido_paterno ?? '';
+const obtenerApellidoM = (usuario) => usuario?.apellidoM ?? usuario?.apellidom ?? usuario?.apellido_materno ?? '';
+
 export const ControlUsuarios = () => {
     const formularioRef = useRef(null);
     // --- 1. ESTADOS DE BÚSQUEDA Y LISTADO ---
@@ -159,8 +162,8 @@ export const ControlUsuarios = () => {
         setForm({
             id_usuario: empleado.id_usuario || empleado.id || null,
             nombre: empleado.nombre || '',
-            apellidoP: empleado.apellidoP || empleado.apellido_paterno || '',
-            apellidoM: empleado.apellidoM || empleado.apellido_materno || '',
+            apellidoP: obtenerApellidoP(empleado),
+            apellidoM: obtenerApellidoM(empleado),
             telefono: empleado.telefono || '',
             contraseña: '', 
             rol: empleado.rol === 'Administrador' ? 'Administrador' : 'Empleado'
@@ -235,7 +238,7 @@ export const ControlUsuarios = () => {
         const idUsuario = usuario.id_usuario || usuario.id;
         if (!idUsuario) return;
 
-        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoP || ''}`.trim();
+        const nombreCompleto = `${usuario.nombre || ''} ${obtenerApellidoP(usuario)}`.trim();
         setUsuarioAEliminar(null);
 
         try {
@@ -654,7 +657,7 @@ export const ControlUsuarios = () => {
                                     <tr key={usr.id_usuario}>
                                         <td><strong>#{usr.id_usuario}</strong></td>
                                         <td className="txt-nombre-completo">
-                                            {usr.nombre} {usr.apellidoP} {usr.apellidoM || ''}
+                                            {usr.nombre} {obtenerApellidoP(usr)} {obtenerApellidoM(usr)}
                                         </td>
                                         <td>{usr.telefono}</td>
                                         <td>
@@ -803,7 +806,7 @@ export const ControlUsuarios = () => {
                         <div className="modal-icono-contenedor modal-icono-alerta">!</div>
                         <h3>Eliminar usuario</h3>
                         <p>
-                            Deseas eliminar al usuario <strong>{usuarioAEliminar.nombre} {usuarioAEliminar.apellidoP}</strong>? Se quitara su acceso, pero sus ventas historicas se conservaran para reportes.
+                            Deseas eliminar al usuario <strong>{usuarioAEliminar.nombre} {obtenerApellidoP(usuarioAEliminar)}</strong>? Se quitara su acceso, pero sus ventas historicas se conservaran para reportes.
                         </p>
                         <div className="modal-acciones-confirmacion">
                             <button type="button" className="modal-boton-cancelar" onClick={() => setUsuarioAEliminar(null)}>
