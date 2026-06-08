@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ApiStockBloom } from '../Service/ApiStockBloom';
 import './ControlUsuarios.css';
 
@@ -9,6 +9,7 @@ const obtenerFechaLocal = () => {
 };
 
 export const ControlUsuarios = () => {
+    const formularioRef = useRef(null);
     // --- 1. ESTADOS DE BÚSQUEDA Y LISTADO ---
     const [telBusqueda, setTelBusqueda] = useState('');
     const [usuariosList, setUsuariosList] = useState([]); 
@@ -46,6 +47,7 @@ export const ControlUsuarios = () => {
         historial_contable: false,
         administrar_usuarios: false
     });
+    const tienePrivilegiosSeleccionados = Object.values(privilegios).some(Boolean);
 
     // --- 4. ESTADO DEL MODAL DINÁMICO ---
     const [modalConfig, setModalConfig] = useState({
@@ -184,6 +186,10 @@ export const ControlUsuarios = () => {
                 administrar_usuarios: esAdmin
             });
         }
+
+        window.requestAnimationFrame(() => {
+            formularioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
     };
 
     const manejarBusqueda = async () => {
@@ -331,6 +337,16 @@ export const ControlUsuarios = () => {
 
     const manejarEnvio = async (e) => {
         e.preventDefault();
+        if (!tienePrivilegiosSeleccionados) {
+            setModalConfig({
+                mostrar: true,
+                tipo: 'error',
+                titulo: 'Privilegios requeridos',
+                mensaje: 'Selecciona al menos un privilegio de acceso antes de guardar.'
+            });
+            return;
+        }
+
         const datosUsuario = { ...form, contraseña: form.contraseña, privilegios };
 
         try {
@@ -447,7 +463,7 @@ export const ControlUsuarios = () => {
             </div>
 
             {/* 2. SECCIÓN: FORMULARIO DE REGISTRO / EDICIÓN */}
-            <div className="formulario-tarjeta">
+            <div className="formulario-tarjeta" ref={formularioRef}>
                 <div className="formulario-header">
                     <h3>{form.id_usuario ? `📝 Editando Colaborador: ${form.nombre} (ID #${form.id_usuario})` : '🌱 Registrar Nuevo Colaborador'}</h3>
                 </div>
@@ -593,10 +609,17 @@ export const ControlUsuarios = () => {
                                 </div>
                             </label>
                         </div>
+                        {!tienePrivilegiosSeleccionados && (
+                            <p className="privilegios-aviso">Selecciona al menos un privilegio para poder guardar.</p>
+                        )}
                     </div>
 
                     <div className="form-acciones">
-                        <button type="submit" className={`btn-submit ${form.id_usuario ? 'btn-editando' : 'btn-guardando'}`}>
+                        <button
+                            type="submit"
+                            className={`btn-submit ${form.id_usuario ? 'btn-editando' : 'btn-guardando'}`}
+                            disabled={!tienePrivilegiosSeleccionados}
+                        >
                             {form.id_usuario ? '💾 Guardar Cambios de Personal' : '➕ Dar de Alta Colaborador'}
                         </button>
                         {form.id_usuario && (

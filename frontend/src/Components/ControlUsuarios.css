@@ -308,6 +308,14 @@
     transform: translateY(-1px);
 }
 
+.privilegios-aviso {
+    margin: 12px 0 0;
+    color: var(--rosa-fuerte);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
 /* ==========================================================================
    BOTONES DE ACCIÓN DE FORMULARIO
    ========================================================================== */
@@ -328,6 +336,18 @@
     cursor: pointer;
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
+}
+
+.btn-submit:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-submit:disabled:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-guardando {
