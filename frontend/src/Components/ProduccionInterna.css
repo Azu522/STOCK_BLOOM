@@ -413,10 +413,42 @@
     border: 1px solid var(--verde-hoja);
 }
 
+.btn-editar-produccion:hover,
+.btn-editar-produccion:focus-visible {
+    background: var(--verde-bosque);
+    color: #FFFFFF;
+    border-color: var(--verde-bosque);
+    box-shadow: 0 0 0 3px rgba(46, 94, 62, 0.18), var(--shadow-sm);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.btn-editar-produccion:active {
+    background: #1F4A30;
+    border-color: #1F4A30;
+    transform: translateY(0);
+}
+
 .btn-eliminar-produccion {
     background: #FFD3DA;
     color: #9D1F35;
     border: 1px solid #FF9CAD;
+}
+
+.btn-eliminar-produccion:hover,
+.btn-eliminar-produccion:focus-visible {
+    background: #D65A6F;
+    color: #FFFFFF;
+    border-color: #D65A6F;
+    box-shadow: 0 0 0 3px rgba(214, 90, 111, 0.20), var(--shadow-sm);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.btn-eliminar-produccion:active {
+    background: #B8374D;
+    border-color: #B8374D;
+    transform: translateY(0);
 }
 
 .btn-cancelar-produccion {
@@ -425,8 +457,6 @@
     border: 1px solid #D8BF79;
 }
 
-.btn-editar-produccion:hover,
-.btn-eliminar-produccion:hover,
 .btn-cancelar-produccion:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
