@@ -792,7 +792,176 @@ div.venta-main div.ticket-header img.logo-ticket-forced {
 
 
 /* --- IMPRESIÓN --- */
+.ticket-imprimible {
+    width: 100%;
+    max-width: 310px;
+    margin: 0 auto;
+    padding: 14px 16px;
+    background: #fff;
+    color: #1f2933;
+    font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+    font-size: 12px;
+    line-height: 1.35;
+    box-sizing: border-box;
+}
+
+.ticket-header {
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #7c8a7c;
+    margin-bottom: 10px;
+}
+
+.ticket-header h3 {
+    margin: 6px 0 4px;
+    color: #203525;
+    font-size: 14px;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+.ticket-subtitle {
+    margin: 0;
+    color: #4f6b3a;
+    font-size: 11px;
+}
+
+.ticket-info p {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 2px 0;
+    color: #203525;
+    font-size: 11px;
+}
+
+.ticket-info strong {
+    white-space: nowrap;
+}
+
+.ticket-divisor,
+.ticket-divisor-suave {
+    height: 1px;
+    margin: 10px 0;
+    overflow: hidden;
+    color: transparent;
+    border-top: 1px dashed #7c8a7c;
+}
+
+.ticket-detalle-header,
+.item-fila-principal,
+.item-fila-secundaria {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 78px;
+    column-gap: 8px;
+    align-items: start;
+}
+
+.ticket-detalle-header {
+    padding: 5px 0;
+    border-bottom: 1px solid #d8e4d4;
+    color: #203525;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.ticket-item {
+    padding: 7px 0;
+    border-bottom: 1px dotted #d8e4d4;
+}
+
+.col-cant {
+    text-align: right;
+}
+
+.col-desc {
+    min-width: 0;
+    color: #203525;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.col-sub {
+    text-align: right;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.col-desc-precio {
+    grid-column: 2 / 4;
+    color: #5f6f5d;
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.ticket-totales {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #7c8a7c;
+}
+
+.total-fila {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 4px 0;
+    color: #203525;
+}
+
+.total-destaque {
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.ticket-footer {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #7c8a7c;
+    text-align: center;
+    color: #4f6b3a;
+    font-size: 10.5px;
+}
+
+.ticket-footer p {
+    margin: 3px 0;
+}
+
+.ticket-acciones {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.btn-print-ticket,
+.btn-close-ticket {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    background: var(--verde-bosque);
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.btn-close-ticket {
+    background: var(--verde-invernadero);
+}
+
 @media print {
+    @page {
+        size: 80mm auto;
+        margin: 4mm;
+    }
+
+    html,
+    body {
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
     body * { 
         visibility: hidden !important; 
     }
@@ -804,12 +973,36 @@ div.venta-main div.ticket-header img.logo-ticket-forced {
         position: absolute !important; 
         left: 0 !important; 
         top: 0 !important; 
-        width: 100% !important; 
+        width: 72mm !important; 
+        max-width: 72mm !important;
         border: none !important; 
         box-shadow: none !important; 
         padding: 0 !important;
         margin: 0 !important;
+        font-size: 10px !important;
+        line-height: 1.25 !important;
     }
+
+    .ticket-header h3 {
+        font-size: 12px !important;
+    }
+
+    .ticket-detalle-header,
+    .item-fila-principal,
+    .item-fila-secundaria {
+        grid-template-columns: 32px minmax(0, 1fr) 58px !important;
+        column-gap: 5px !important;
+    }
+
+    .logo-ticket-forced {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+        max-width: 42px !important;
+        max-height: 42px !important;
+    }
+
     .no-print { 
         display: none !important; 
     }
