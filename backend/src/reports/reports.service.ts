@@ -180,6 +180,8 @@ export class ReportsService {
     const inicioDate = new Date(`${rango.inicio}T00:00:00`);
     const finDate = new Date(`${rango.fin}T00:00:00`);
     const idUsuario = filtros.id_usuario ? Number(filtros.id_usuario) : null;
+    const filtroUsuarioSql = idUsuario ? 'WHERE u.id_usuario = ?' : '';
+    const parametrosUsuarios = idUsuario ? [rango.inicio, rango.fin, idUsuario] : [rango.inicio, rango.fin];
 
     const [rows] = await this.db.query(
       `SELECT
@@ -196,10 +198,10 @@ export class ReportsService {
          FROM detalle_venta
          GROUP BY id_venta
        ) vu ON v.id_venta = vu.id_venta
-       WHERE (? IS NULL OR u.id_usuario = ?)
+       ${filtroUsuarioSql}
        GROUP BY u.id_usuario, empleado, u.rol
        ORDER BY total_importe DESC, empleado ASC`,
-      [rango.inicio, rango.fin, idUsuario, idUsuario],
+      parametrosUsuarios,
     );
 
     const totalImporte = rows.reduce((sum, row) => sum + Number(row.total_importe || 0), 0);
