@@ -7,6 +7,7 @@ const obtenerFechaInput = (fecha) => fecha ? String(fecha).split('T')[0] : '';
 export const ProduccionInterna = () => {
     const [plantas, setPlantas] = useState([]);
     const [lotes, setLotes] = useState([]);
+    const [loteAEliminar, setLoteAEliminar] = useState(null);
     
     // --- 🔍 ESTADOS PARA EL BUSCADOR DE PLANTAS INTERACTIVO ---
     const [busquedaPlanta, setBusquedaPlanta] = useState('');
@@ -33,6 +34,25 @@ export const ProduccionInterna = () => {
         document.addEventListener('keydown', cerrarConEnter);
         return () => document.removeEventListener('keydown', cerrarConEnter);
     }, [modalConfig.mostrar]);
+
+    useEffect(() => {
+        if (!loteAEliminar) return;
+
+        const manejarTeclasEliminacion = (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                confirmarEliminarLote();
+            }
+
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                setLoteAEliminar(null);
+            }
+        };
+
+        document.addEventListener('keydown', manejarTeclasEliminacion);
+        return () => document.removeEventListener('keydown', manejarTeclasEliminacion);
+    }, [loteAEliminar]);
 
     // --- ESTADO DEL FORMULARIO ---
     const [form, setForm] = useState({ 
@@ -197,10 +217,16 @@ export const ProduccionInterna = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const eliminarLote = async (lote) => {
-        if (!window.confirm(`Deseas eliminar el lote #${lote.id_produccion}?`)) return;
+    const solicitarEliminarLote = (lote) => {
+        setLoteAEliminar(lote);
+    };
+
+    const confirmarEliminarLote = async () => {
+        if (!loteAEliminar) return;
 
         try {
+            const lote = loteAEliminar;
+            setLoteAEliminar(null);
             const res = await ApiStockBloom.eliminarProduccion(lote.id_produccion);
             if (res && res.success) {
                 setModalConfig({
@@ -405,7 +431,7 @@ export const ProduccionInterna = () => {
                                                 <button type="button" className="btn-editar-produccion" onClick={() => cargarLoteEnFormulario(l)}>
                                                     Editar
                                                 </button>
-                                                <button type="button" className="btn-eliminar-produccion" onClick={() => eliminarLote(l)}>
+                                                <button type="button" className="btn-eliminar-produccion" onClick={() => solicitarEliminarLote(l)}>
                                                     Eliminar
                                                 </button>
                                             </div>
@@ -417,6 +443,27 @@ export const ProduccionInterna = () => {
                     </table>
                 </div>
             </div>
+
+            {loteAEliminar && (
+                <div className="modal-overlay">
+                    <div className="modal-contenido modal-confirmar-produccion">
+                        <div className="modal-icono-contenedor modal-icono-alerta-produccion">!</div>
+                        <h3>Eliminar lote</h3>
+                        <p>
+                            Deseas eliminar el lote <strong>#{loteAEliminar.id_produccion}</strong>
+                            {loteAEliminar.nombre_comun ? ` de ${loteAEliminar.nombre_comun}` : ''}? Esta accion no se puede deshacer.
+                        </p>
+                        <div className="modal-acciones-confirmacion">
+                            <button type="button" className="modal-boton-cancelar" onClick={() => setLoteAEliminar(null)}>
+                                Cancelar
+                            </button>
+                            <button type="button" className="modal-boton-eliminar" onClick={confirmarEliminarLote}>
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* --- MODAL EMERGENTE CORPORATIVO INTERACTIVO --- */}
             {modalConfig.mostrar && (
