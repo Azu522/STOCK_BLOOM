@@ -156,56 +156,58 @@
 /* Dropdown de Sugerencias Flotante */
 .buscador-seccion .dropdown-lista {
     position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
     width: 100%;
-    max-height: 250px;
+    max-height: 240px;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(10px);
+    background: #FFFFFF;
     border: 2px solid var(--verde-hoja);
-    border-radius: var(--radius-sm);
+    border-radius: 10px;
     list-style: none;
-    z-index: 1000;
-    box-shadow: var(--shadow-lg);
-    margin: 8px 0 0 0;
-    padding: 0;
+    z-index: 20;
+    box-shadow: var(--shadow-md);
+    margin: 0;
+    padding: 6px 0;
 }
 
 .buscador-seccion .dropdown-lista li {
-    padding: 12px 18px;
+    padding: 11px 14px;
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--verde-suave);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    border-bottom: 1px solid #EDF5E9;
     transition: var(--transition);
 }
 
 .buscador-seccion .dropdown-lista li:hover {
-    background: var(--verde-suave);
-    padding-left: 22px;
+    background: #FFF2CC;
 }
 
 .buscador-seccion .sug-nombre {
-    font-weight: 600;
     color: var(--verde-bosque);
+    font-weight: 900;
 }
 
 .buscador-seccion .sug-cientifico {
-    font-style: italic;
     color: var(--tierra);
-    font-size: 0.8rem;
-    margin-left: 8px;
-    flex-grow: 1;
+    font-size: 12px;
+    font-style: italic;
+    margin-left: 0;
 }
 
 .buscador-seccion .sug-stock {
-    font-size: 0.8rem;
+    font-size: 12px;
     font-weight: 700;
     color: var(--marron-george);
     background: var(--crema-calido);
-    padding: 3px 8px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
     border: 1px solid var(--beige-george);
+    align-self: flex-end;
+    margin-top: 2px;
 }
 
 .buscador-seccion .no-sugerencias {
