@@ -196,7 +196,7 @@ export const PuntodeVenta = ({ user }) => {
 
     // Cambiar la cantidad manualmente en la tabla
     const cambiarCantidad = (index, valor) => {
-        const nuevaCantidad = Math.max(1, parseInt(valor) || 1);
+        const nuevaCantidad = Math.max(0, parseInt(valor) || 0);
         const nuevoCarrito = carrito.map((item, idx) => {
             if (idx === index) {
                 return { 
@@ -383,22 +383,9 @@ export const PuntodeVenta = ({ user }) => {
                 <section className="col-productos">
                     <div className="encabezado-productos">
                         <div className="modo-venta">
-                            <button 
-                                className={`btn-modo ${modoVenta === 'menudeo' ? 'active' : ''}`} 
-                                onClick={() => setModoVenta('menudeo')}
-                            >
-                                🪴 Menudeo
-                            </button>
-                            <button 
-                                className={`btn-modo ${modoVenta === 'mayoreo' ? 'active' : ''}`} 
-                                onClick={() => setModoVenta('mayoreo')}
-                            >
-                                📦 Mayoreo
-                            </button>
+                            
                         </div>
-                        <div className="indicador-modo">
-                            Modo activo: <strong>{modoVenta.toUpperCase()}</strong>
-                        </div>
+                        
                     </div>
                     
                     <div className="buscador-contenedor">
@@ -468,7 +455,7 @@ export const PuntodeVenta = ({ user }) => {
                                                 <input 
                                                     className="input-cantidad"
                                                     type="number" 
-                                                    min="1"
+                                                    min="0"
                                                     value={item.cantidad} 
                                                     onChange={(e) => cambiarCantidad(index, e.target.value)} 
                                                 />

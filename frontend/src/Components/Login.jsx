@@ -154,16 +154,20 @@ export const Login = ({ onLoginSuccess }) => {
                                 />
                             </div>
 
-                            {mensajeRecuperacion && (
-                                <div style={mensajeRecuperacion.tipo === 'exito' ? successStyle : errorStyle}>
-                                    <p style={messageTextStyle}>{mensajeRecuperacion.texto}</p>
-                                    {mensajeRecuperacion.contrasenaTemporal && (
-                                        <strong style={temporaryPasswordStyle}>
-                                            Contrasena temporal: {mensajeRecuperacion.contrasenaTemporal}
-                                        </strong>
-                                    )}
-                                </div>
-                            )}
+                            <div style={recoveryMessageSlotStyle}>
+                                {mensajeRecuperacion ? (
+                                    <div style={mensajeRecuperacion.tipo === 'exito' ? successStyle : errorStyle}>
+                                        <p style={messageTextStyle}>{mensajeRecuperacion.texto}</p>
+                                        {mensajeRecuperacion.contrasenaTemporal && (
+                                            <strong style={temporaryPasswordStyle}>
+                                                Contrasena temporal: {mensajeRecuperacion.contrasenaTemporal}
+                                            </strong>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div style={emptyRecoveryMessageStyle} aria-hidden="true" />
+                                )}
+                            </div>
 
                             <button type="submit" style={buttonStyle} disabled={cargandoRecuperacion}>
                                 {cargandoRecuperacion ? 'Generando...' : 'Enviar contrasena temporal'}
@@ -338,23 +342,41 @@ const inputStyle = {
 
 const errorStyle = {
     margin: 0,
+    width: '100%',
+    boxSizing: 'border-box',
     padding: '11px 13px',
     borderRadius: '12px',
     background: '#FFC1D1',
     color: '#7A3E1E',
     fontSize: '13px',
-    fontWeight: 700
+    fontWeight: 700,
+    overflowWrap: 'anywhere'
 };
 
 const successStyle = {
     margin: 0,
+    width: '100%',
+    boxSizing: 'border-box',
     padding: '12px 13px',
     borderRadius: '12px',
     background: '#D6E9CD',
     color: '#2E5E3E',
     fontSize: '13px',
     fontWeight: 700,
-    border: '1px solid #A8C98A'
+    border: '1px solid #A8C98A',
+    overflowWrap: 'anywhere'
+};
+
+const recoveryMessageSlotStyle = {
+    minHeight: '110px',
+    display: 'flex',
+    alignItems: 'stretch'
+};
+
+const emptyRecoveryMessageStyle = {
+    width: '100%',
+    minHeight: '110px',
+    visibility: 'hidden'
 };
 
 const messageTextStyle = {

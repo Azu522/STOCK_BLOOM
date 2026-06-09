@@ -26,11 +26,12 @@ export class SalesService {
 
   async registrarVenta(payload: CreateSaleDto) {
     const fechaFormateada =
-      payload.fecha && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(payload.fecha)
-          ? payload.fecha
-          : payload.fecha
-            ? new Date(payload.fecha).toISOString().slice(0, 19).replace('T', ' ')
-            : this.formatLocalDateTime();
+  payload.fecha &&
+  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(payload.fecha)
+    ? payload.fecha
+    : payload.fecha
+      ? this.formatLocalDateTime(new Date(payload.fecha))
+      : this.formatLocalDateTime();
 
     const connection = await this.db.getConnection();
 
