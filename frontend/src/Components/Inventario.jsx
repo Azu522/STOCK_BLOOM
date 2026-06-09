@@ -35,6 +35,7 @@ export const Inventario = () => {
 
     useEffect(() => {
         cargarInventario();
+  console.log(ventasDia);
 
         const sincronizar = () => cargarInventario(false);
         const intervalo = setInterval(sincronizar, 8000);
@@ -97,6 +98,7 @@ export const Inventario = () => {
                 resumen: data?.resumen || { totalVentas: 0, totalImporte: 0, totalUnidades: 0 },
                 ventas: Array.isArray(data?.ventas) ? data.ventas : []
             });
+            console.log(ventasDia)
         } catch (err) {
             setError('No se pudieron cargar las ventas del dia.');
         } finally {
@@ -444,8 +446,11 @@ export const Inventario = () => {
                                 ventasDia.ventas.map((venta) => (
                                     <tr key={venta.id_venta}>
                                         <td><strong>#{venta.id_venta}</strong></td>
-                                        <td>{venta.fecha ? new Date(venta.fecha).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '--:--'}</td>
-                                        <td>{venta.cajero || 'Sin cajero'}</td>
+                                        <td>
+                                        {venta.fecha
+                                            ? venta.fecha.substring(11, 16)
+                                            : '--:--'}
+                                        </td>                                        <td>{venta.cajero || 'Sin cajero'}</td>
                                         <td>
                                             <div className="detalle-venta-dia">
                                                 {(venta.detalles || []).map((detalle) => (
