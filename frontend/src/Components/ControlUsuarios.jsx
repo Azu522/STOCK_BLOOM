@@ -10,6 +10,7 @@ const obtenerFechaLocal = () => {
 
 const obtenerApellidoP = (usuario) => usuario?.apellidoP ?? usuario?.apellidop ?? usuario?.apellido_paterno ?? '';
 const obtenerApellidoM = (usuario) => usuario?.apellidoM ?? usuario?.apellidom ?? usuario?.apellido_materno ?? '';
+const esUsuarioActivo = (usuario) => usuario?.activo === undefined || usuario?.activo === true || Number(usuario?.activo) === 1;
 
 export const ControlUsuarios = () => {
     const formularioRef = useRef(null);
@@ -144,9 +145,17 @@ export const ControlUsuarios = () => {
         try {
             const rango = obtenerRangoVentasEmpleado();
             const data = await ApiStockBloom.obtenerVentasPorEmpleado(rango.inicio, rango.fin);
+            const empleadosActivosConVentas = Array.isArray(data?.empleados)
+                ? data.empleados.filter((empleado) => esUsuarioActivo(empleado) && Number(empleado.total_ventas || 0) > 0)
+                : [];
+            const resumenVisible = empleadosActivosConVentas.reduce((resumen, empleado) => ({
+                totalVentas: resumen.totalVentas + Number(empleado.total_ventas || 0),
+                totalUnidades: resumen.totalUnidades + Number(empleado.total_unidades || 0),
+                totalImporte: resumen.totalImporte + Number(empleado.total_importe || 0)
+            }), { totalVentas: 0, totalUnidades: 0, totalImporte: 0 });
             setVentasEmpleado({
-                resumen: data?.resumen || { totalVentas: 0, totalUnidades: 0, totalImporte: 0 },
-                empleados: Array.isArray(data?.empleados) ? data.empleados : []
+                resumen: resumenVisible,
+                empleados: empleadosActivosConVentas
             });
         } catch (err) {
             console.error('Error al cargar ventas por empleado:', err);

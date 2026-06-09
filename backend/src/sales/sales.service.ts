@@ -167,6 +167,7 @@ export class SalesService {
         u.id_usuario,
         TRIM(CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidoP, ''), ' ', COALESCE(u.apellidoM, ''))) AS empleado,
         u.rol,
+        u.activo,
         COUNT(v.id_venta) AS total_ventas,
         COALESCE(SUM(vu.total_unidades), 0) AS total_unidades,
         COALESCE(SUM(v.total), 0) AS total_importe
@@ -178,7 +179,7 @@ export class SalesService {
          GROUP BY id_venta
        ) vu ON v.id_venta = vu.id_venta
        WHERE u.activo = 1
-       GROUP BY u.id_usuario, empleado, u.rol
+       GROUP BY u.id_usuario, empleado, u.rol, u.activo
        ORDER BY total_importe DESC, empleado ASC`,
       [fechaInicio, fechaFin],
     );
@@ -219,6 +220,7 @@ export class SalesService {
         u.id_usuario,
         TRIM(CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidoP, ''), ' ', COALESCE(u.apellidoM, ''))) AS empleado,
         u.rol,
+        u.activo,
         COUNT(v.id_venta) AS total_ventas,
         COALESCE(SUM(vu.total_unidades), 0) AS total_unidades,
         COALESCE(SUM(v.total), 0) AS total_importe
@@ -234,7 +236,7 @@ export class SalesService {
            LOWER(TRIM(CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidoP, ''), ' ', COALESCE(u.apellidoM, '')))) LIKE ?
            OR ${idUsuarioSql} = ?
          )
-       GROUP BY u.id_usuario, empleado, u.rol
+       GROUP BY u.id_usuario, empleado, u.rol, u.activo
        ORDER BY total_importe DESC, empleado ASC
        LIMIT 20`,
       [fechaInicio, fechaFin, likeTerm, termino],
