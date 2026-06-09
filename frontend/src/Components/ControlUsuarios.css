@@ -628,6 +628,86 @@
     cursor: not-allowed;
 }
 
+.historial-empleados-panel {
+    margin: 18px 20px 22px;
+    padding: 16px;
+    border: 1px solid var(--beige-george);
+    border-radius: 8px;
+    background: #fffdf7;
+}
+
+.historial-empleados-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.historial-empleados-header h4 {
+    margin: 0 0 4px;
+    color: var(--marron-george);
+    font-size: 15px;
+}
+
+.historial-empleados-header span {
+    display: block;
+    color: var(--text-main);
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.historial-empleados-buscador {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.historial-empleados-buscador input,
+.historial-empleados-buscador button {
+    min-height: 38px;
+    border-radius: 8px;
+    font-weight: 800;
+}
+
+.historial-empleados-buscador input {
+    min-width: 260px;
+    border: 1px solid var(--beige-george);
+    padding: 0 12px;
+    color: var(--primary-dark);
+    background: #fff;
+}
+
+.historial-empleados-buscador button {
+    border: none;
+    padding: 0 14px;
+    color: #fff;
+    background: var(--marron-george);
+    cursor: pointer;
+}
+
+.historial-empleados-buscador button:disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+}
+
+.historial-empleados-resultados {
+    margin-top: 14px;
+}
+
+.badge-inactivo {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--crema-calido);
+    border: 1px solid var(--beige-george);
+    color: var(--marron-george);
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
 .modal-confirmar-usuario {
     border-top-color: var(--rosa-fuerte);
 }

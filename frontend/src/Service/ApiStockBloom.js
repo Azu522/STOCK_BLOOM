@@ -102,6 +102,18 @@ export const ApiStockBloom = {
         return await response.json();
     },
 
+    buscarVentasHistoricasEmpleado: async (inicio, fin, busqueda) => {
+        const params = new URLSearchParams();
+        if (inicio) params.append('inicio', inicio);
+        if (fin) params.append('fin', fin);
+        if (busqueda) params.append('q', busqueda);
+
+        const query = params.toString() ? `?${params.toString()}` : '';
+        const response = await fetch(`${BASE_URL}/ventas/empleados/historico${query}`);
+        if (!response.ok) throw new Error('Error al buscar ventas historicas por empleado');
+        return await response.json();
+    },
+
     obtenerPlantas: async () => {
         const response = await fetch(`${BASE_URL}/planta`);
         return await response.json();

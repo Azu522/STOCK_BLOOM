@@ -11,6 +11,15 @@ export class SalesController {
     return this.salesService.listarVentasPorEmpleado(inicio, fin);
   }
 
+  @Get('empleados/historico')
+  buscarVentasHistoricasPorEmpleado(
+    @Query('inicio') inicio?: string,
+    @Query('fin') fin?: string,
+    @Query('q') busqueda?: string,
+  ) {
+    return this.salesService.buscarVentasHistoricasPorEmpleado(inicio, fin, busqueda);
+  }
+
   @Post()
   registrarVenta(@Body() payload: CreateSaleDto) {
     return this.salesService.registrarVenta(payload);

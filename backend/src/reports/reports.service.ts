@@ -181,7 +181,7 @@ export class ReportsService {
     const finDate = new Date(`${rango.fin}T00:00:00`);
     const idUsuario = filtros.id_usuario ? Number(filtros.id_usuario) : null;
 const filtroUsuarioSql = idUsuario
-  ? 'WHERE u.activo = 1 AND u.id_usuario = ?'
+  ? 'WHERE u.id_usuario = ?'
   : 'WHERE u.activo = 1';
     const parametrosUsuarios = idUsuario ? [rango.inicio, rango.fin, idUsuario] : [rango.inicio, rango.fin];
 

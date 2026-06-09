@@ -20,6 +20,10 @@ export const ControlUsuarios = () => {
         resumen: { totalVentas: 0, totalUnidades: 0, totalImporte: 0 },
         empleados: []
     });
+    const [busquedaHistorialEmpleado, setBusquedaHistorialEmpleado] = useState('');
+    const [historialEmpleado, setHistorialEmpleado] = useState([]);
+    const [cargandoHistorialEmpleado, setCargandoHistorialEmpleado] = useState(false);
+    const [historialConsultado, setHistorialConsultado] = useState(false);
     const [tipoPeriodoVentas, setTipoPeriodoVentas] = useState('dia');
     const [fechaInicioVentas, setFechaInicioVentas] = useState(obtenerFechaLocal());
     const [fechaFinVentas, setFechaFinVentas] = useState(obtenerFechaLocal());
@@ -95,6 +99,8 @@ export const ControlUsuarios = () => {
 
     useEffect(() => {
         cargarVentasPorEmpleado();
+        setHistorialEmpleado([]);
+        setHistorialConsultado(false);
     }, [tipoPeriodoVentas, fechaInicioVentas, mesVentas, anioVentas]);
 
     const obtenerRangoVentasEmpleado = () => {
@@ -146,6 +152,39 @@ export const ControlUsuarios = () => {
             console.error('Error al cargar ventas por empleado:', err);
         } finally {
             if (mostrarCarga) setCargandoVentasEmpleado(false);
+        }
+    };
+
+    const buscarHistorialEmpleadoEliminado = async () => {
+        const termino = busquedaHistorialEmpleado.trim();
+
+        if (termino.length < 2) {
+            setModalConfig({
+                mostrar: true,
+                tipo: 'error',
+                titulo: 'Busqueda historica',
+                mensaje: 'Escribe al menos 2 caracteres del nombre o el ID del colaborador eliminado.'
+            });
+            return;
+        }
+
+        setCargandoHistorialEmpleado(true);
+        setHistorialConsultado(true);
+
+        try {
+            const rango = obtenerRangoVentasEmpleado();
+            const data = await ApiStockBloom.buscarVentasHistoricasEmpleado(rango.inicio, rango.fin, termino);
+            setHistorialEmpleado(Array.isArray(data?.empleados) ? data.empleados : []);
+        } catch (err) {
+            console.error('Error al buscar historial de empleado eliminado:', err);
+            setModalConfig({
+                mostrar: true,
+                tipo: 'error',
+                titulo: 'Historial no disponible',
+                mensaje: 'No se pudo consultar el historial de colaboradores eliminados.'
+            });
+        } finally {
+            setCargandoHistorialEmpleado(false);
         }
     };
 
@@ -813,6 +852,79 @@ export const ControlUsuarios = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="historial-empleados-panel">
+                    <div className="historial-empleados-header">
+                        <div>
+                            <h4>Historial de colaboradores eliminados</h4>
+                            <span>Busca por nombre o ID para consultar ventas anteriores y descargar su PDF.</span>
+                        </div>
+                        <div className="historial-empleados-buscador">
+                            <input
+                                type="text"
+                                value={busquedaHistorialEmpleado}
+                                onChange={(e) => setBusquedaHistorialEmpleado(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') buscarHistorialEmpleadoEliminado();
+                                }}
+                                placeholder="Nombre o ID del colaborador..."
+                            />
+                            <button
+                                type="button"
+                                onClick={buscarHistorialEmpleadoEliminado}
+                                disabled={cargandoHistorialEmpleado}
+                            >
+                                {cargandoHistorialEmpleado ? 'Consultando...' : 'Buscar historial'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {historialConsultado && (
+                        <div className="tabla-responsive historial-empleados-resultados">
+                            <table className="tabla-usuarios tabla-ventas-empleados">
+                                <thead>
+                                    <tr>
+                                        <th>Empleado eliminado</th>
+                                        <th>Ventas</th>
+                                        <th>Unidades</th>
+                                        <th>Total vendido</th>
+                                        <th>PDF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {historialEmpleado.length > 0 ? (
+                                        historialEmpleado.map((empleado) => (
+                                            <tr key={`historial-${empleado.id_usuario}`}>
+                                                <td className="txt-nombre-completo">
+                                                    {empleado.empleado || 'Sin nombre'} <span className="badge-inactivo">Inactivo</span>
+                                                </td>
+                                                <td>{empleado.total_ventas}</td>
+                                                <td>{empleado.total_unidades}</td>
+                                                <td><strong>{formatoMoneda(empleado.total_importe)}</strong></td>
+                                                <td>
+                                                    <button
+                                                        type="button"
+                                                        className="btn-pdf-empleado"
+                                                        onClick={() => descargarPdfVentasEmpleado(empleado)}
+                                                        disabled={Number(empleado.total_ventas || 0) === 0 || pdfEmpleadoId === empleado.id_usuario}
+                                                    >
+                                                        {pdfEmpleadoId === empleado.id_usuario ? 'Generando...' : 'PDF'}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="tabla-vacia">
+                                                No se encontraron colaboradores eliminados con ventas en este periodo.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
 

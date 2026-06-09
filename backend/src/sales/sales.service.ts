@@ -177,6 +177,7 @@ export class SalesService {
          FROM detalle_venta
          GROUP BY id_venta
        ) vu ON v.id_venta = vu.id_venta
+       WHERE u.activo = 1
        GROUP BY u.id_usuario, empleado, u.rol
        ORDER BY total_importe DESC, empleado ASC`,
       [fechaInicio, fechaFin],
@@ -190,6 +191,58 @@ export class SalesService {
       inicio: fechaInicio,
       fin: fechaFin,
       resumen: { totalVentas, totalUnidades, totalImporte },
+      empleados: rows.map((row) => ({
+        ...row,
+        total_ventas: Number(row.total_ventas || 0),
+        total_unidades: Number(row.total_unidades || 0),
+        total_importe: Number(row.total_importe || 0),
+      })),
+    };
+  }
+
+  async buscarVentasHistoricasPorEmpleado(inicio?: string, fin?: string, busqueda?: string) {
+    const { fechaInicio, fechaFin } = this.getRangoFechas(inicio, fin);
+    const termino = String(busqueda || '').trim();
+
+    if (termino.length < 2) {
+      return {
+        inicio: fechaInicio,
+        fin: fechaFin,
+        empleados: [],
+      };
+    }
+
+    const likeTerm = `%${termino.toLowerCase()}%`;
+    const idUsuarioSql = this.db.isPostgres() ? 'CAST(u.id_usuario AS TEXT)' : 'CAST(u.id_usuario AS CHAR)';
+    const [rows] = await this.db.query(
+      `SELECT
+        u.id_usuario,
+        TRIM(CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidoP, ''), ' ', COALESCE(u.apellidoM, ''))) AS empleado,
+        u.rol,
+        COUNT(v.id_venta) AS total_ventas,
+        COALESCE(SUM(vu.total_unidades), 0) AS total_unidades,
+        COALESCE(SUM(v.total), 0) AS total_importe
+       FROM usuario u
+       LEFT JOIN venta v ON u.id_usuario = v.id_usuario AND DATE(v.fecha) BETWEEN ? AND ?
+       LEFT JOIN (
+         SELECT id_venta, SUM(cantidad) AS total_unidades
+         FROM detalle_venta
+         GROUP BY id_venta
+       ) vu ON v.id_venta = vu.id_venta
+       WHERE u.activo = 0
+         AND (
+           LOWER(TRIM(CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidoP, ''), ' ', COALESCE(u.apellidoM, '')))) LIKE ?
+           OR ${idUsuarioSql} = ?
+         )
+       GROUP BY u.id_usuario, empleado, u.rol
+       ORDER BY total_importe DESC, empleado ASC
+       LIMIT 20`,
+      [fechaInicio, fechaFin, likeTerm, termino],
+    );
+
+    return {
+      inicio: fechaInicio,
+      fin: fechaFin,
       empleados: rows.map((row) => ({
         ...row,
         total_ventas: Number(row.total_ventas || 0),
