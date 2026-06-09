@@ -15,6 +15,15 @@ export const ApiStockBloom = {
         return await response.json();
     },
 
+    recuperarContrasena: async (metodo, identificador) => {
+        const response = await fetch(`${BASE_URL}/recuperar-contrasena`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ metodo, identificador })
+        });
+        return await response.json();
+    },
+
     // --- MÓDULO: CONTROL DE USUARIOS ---
     obtenerUsuarios: async () => {
         const response = await fetch(`${BASE_URL}/usuarios`);
@@ -34,6 +43,7 @@ export const ApiStockBloom = {
             apellidoP: datosUsuario.apellidoP,
             apellidoM: datosUsuario.apellidoM,
             telefono: datosUsuario.telefono,
+            correo: datosUsuario.correo,
             contrasenia: datosUsuario.contraseña,
             rol: datosUsuario.rol,
             privilegios: datosUsuario.privilegios
@@ -55,6 +65,7 @@ export const ApiStockBloom = {
             apellidoP: datosUsuario.apellidoP,
             apellidoM: datosUsuario.apellidoM,
             telefono: datosUsuario.telefono,
+            correo: datosUsuario.correo,
             contrasenia: datosUsuario.contraseña,
             rol: datosUsuario.rol,
             privilegios: datosUsuario.privilegios
@@ -158,6 +169,15 @@ guardarVenta: async (ventaData) => {
         const response = await fetch(`${BASE_URL}/ventas${query}`);
         if (!response.ok) throw new Error('Error al obtener las ventas del dia');
         return await response.json();
+    },
+
+    eliminarVenta: async (id_venta) => {
+        const response = await fetch(`${BASE_URL}/ventas/${id_venta}`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+        if (data?.success) notificarCambioDatos('venta');
+        return data;
     },
 
     // --- MÓDULOS DE PRODUCCIÓN ---

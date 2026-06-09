@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { SalesService } from './sales.service';
 
@@ -19,5 +19,10 @@ export class SalesController {
   @Get()
   listarVentasPorDia(@Query('fecha') fecha?: string) {
     return this.salesService.listarVentasPorDia(fecha);
+  }
+
+  @Delete(':id_venta')
+  eliminarVenta(@Param('id_venta') idVenta: string) {
+    return this.salesService.eliminarVenta(idVenta);
   }
 }

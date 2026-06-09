@@ -25,6 +25,13 @@ export const Inventario = () => {
     const [fechaReporte, setFechaReporte] = useState(obtenerFechaLocal());
     const [mesReporte, setMesReporte] = useState(String(new Date().getMonth() + 1));
     const [anioReporte, setAnioReporte] = useState(String(new Date().getFullYear()));
+    const [ventaAEliminar, setVentaAEliminar] = useState(null);
+    const [modalConfig, setModalConfig] = useState({
+        mostrar: false,
+        tipo: 'exito',
+        titulo: '',
+        mensaje: ''
+    });
 
     useEffect(() => {
         cargarInventario();
@@ -38,6 +45,20 @@ export const Inventario = () => {
             window.removeEventListener('stockbloom:data-changed', sincronizar);
         };
     }, []);
+
+    useEffect(() => {
+        if (!modalConfig.mostrar) return;
+
+        const cerrarConEnter = (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                setModalConfig(prev => ({ ...prev, mostrar: false }));
+            }
+        };
+
+        document.addEventListener('keydown', cerrarConEnter);
+        return () => document.removeEventListener('keydown', cerrarConEnter);
+    }, [modalConfig.mostrar]);
 
     useEffect(() => {
         cargarVentasDia(fechaVentas);
@@ -82,6 +103,65 @@ export const Inventario = () => {
             if (mostrarCarga) setCargandoVentas(false);
         }
     };
+
+    const solicitarEliminarVenta = (venta) => {
+        setVentaAEliminar(venta);
+    };
+
+    const confirmarEliminarVenta = async () => {
+        if (!ventaAEliminar) return;
+
+        const venta = ventaAEliminar;
+        setVentaAEliminar(null);
+
+        try {
+            const res = await ApiStockBloom.eliminarVenta(venta.id_venta);
+
+            if (res && res.success) {
+                setModalConfig({
+                    mostrar: true,
+                    tipo: 'exito',
+                    titulo: 'Venta eliminada',
+                    mensaje: res.mensaje || `La venta #${venta.id_venta} fue eliminada correctamente.`
+                });
+                await cargarVentasDia(fechaVentas, false);
+                await cargarInventario(false);
+            } else {
+                setModalConfig({
+                    mostrar: true,
+                    tipo: 'error',
+                    titulo: 'No se pudo eliminar',
+                    mensaje: res.error || 'La venta no pudo eliminarse. Intenta nuevamente.'
+                });
+            }
+        } catch (err) {
+            setModalConfig({
+                mostrar: true,
+                tipo: 'error',
+                titulo: 'Error de conexion',
+                mensaje: 'No se pudo establecer comunicacion con el servidor de Stock Bloom.'
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (!ventaAEliminar) return;
+
+        const manejarTeclasEliminacion = (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                confirmarEliminarVenta();
+            }
+
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                setVentaAEliminar(null);
+            }
+        };
+
+        document.addEventListener('keydown', manejarTeclasEliminacion);
+        return () => document.removeEventListener('keydown', manejarTeclasEliminacion);
+    }, [ventaAEliminar]);
 
     const resumen = useMemo(() => {
         const totalPlantas = plantas.length;
@@ -179,6 +259,14 @@ export const Inventario = () => {
             style: 'currency',
             currency: 'MXN'
         });
+    };
+
+    const obtenerEstilosModal = () => {
+        const estilos = {
+            exito: { bgIcono: '#e8f5e9', borderIcono: '#a5d6a7', colorIcono: '#2e7d32', bgBoton: '#2e7d32', icono: 'OK' },
+            error: { bgIcono: '#ffebee', borderIcono: '#ef9a9a', colorIcono: '#c62828', bgBoton: '#c62828', icono: '!' }
+        };
+        return estilos[modalConfig.tipo] || estilos.exito;
     };
 
     return (
@@ -344,12 +432,13 @@ export const Inventario = () => {
                                 <th>Cajero</th>
                                 <th>Detalle</th>
                                 <th>Total</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {cargandoVentas ? (
                                 <tr>
-                                    <td colSpan="5" className="estado-tabla">Cargando ventas...</td>
+                                    <td colSpan="6" className="estado-tabla">Cargando ventas...</td>
                                 </tr>
                             ) : ventasDia.ventas.length > 0 ? (
                                 ventasDia.ventas.map((venta) => (
@@ -367,11 +456,20 @@ export const Inventario = () => {
                                             </div>
                                         </td>
                                         <td>{formatoMoneda(Number(venta.total || 0))}</td>
+                                        <td>
+                                            <button
+                                                type="button"
+                                                className="btn-eliminar-venta"
+                                                onClick={() => solicitarEliminarVenta(venta)}
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5" className="estado-tabla">No hay ventas registradas en esta fecha.</td>
+                                    <td colSpan="6" className="estado-tabla">No hay ventas registradas en esta fecha.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -442,6 +540,60 @@ export const Inventario = () => {
                     </button>
                 </div>
             </section>
+
+            {ventaAEliminar && (
+                <div className="modal-overlay">
+                    <div className="modal-contenido modal-eliminar-venta">
+                        <div className="modal-icono-contenedor eliminar-icono">X</div>
+                        <h3>Eliminar venta</h3>
+                        <p>
+                            Deseas eliminar la venta <strong>#{ventaAEliminar.id_venta}</strong> por{' '}
+                            <strong>{formatoMoneda(Number(ventaAEliminar.total || 0))}</strong>?
+                        </p>
+                        <div className="modal-acciones-eliminar">
+                            <button
+                                type="button"
+                                className="modal-boton-cancelar"
+                                onClick={() => setVentaAEliminar(null)}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                className="modal-boton-eliminar"
+                                onClick={confirmarEliminarVenta}
+                            >
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modalConfig.mostrar && (
+                <div className="modal-overlay">
+                    <div className="modal-contenido" style={{ borderTopColor: obtenerEstilosModal().borderIcono }}>
+                        <div
+                            className="modal-icono-contenedor"
+                            style={{
+                                backgroundColor: obtenerEstilosModal().bgIcono,
+                                color: obtenerEstilosModal().colorIcono
+                            }}
+                        >
+                            {obtenerEstilosModal().icono}
+                        </div>
+                        <h3>{modalConfig.titulo}</h3>
+                        <p>{modalConfig.mensaje}</p>
+                        <button
+                            className="modal-boton-aceptar"
+                            style={{ backgroundColor: obtenerEstilosModal().bgBoton }}
+                            onClick={() => setModalConfig({ ...modalConfig, mostrar: false })}
+                        >
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

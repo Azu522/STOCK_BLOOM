@@ -36,6 +36,7 @@ const permisosPorPrivilegio = {
 export class AuthService {
   private passwordColumnName: string | null = null;
   private activeColumnChecked = false;
+  private emailColumnChecked = false;
 
   constructor(private readonly db: DatabaseService) {}
 
@@ -76,6 +77,23 @@ export class AuthService {
     }
 
     this.activeColumnChecked = true;
+  }
+
+  private async ensureEmailColumn() {
+    if (this.emailColumnChecked) return;
+
+    const [columns] = await this.db.query('SHOW COLUMNS FROM usuario');
+    const hasEmailColumn = columns.some((column) => String(column.Field).toLowerCase() === 'correo');
+
+    if (!hasEmailColumn) {
+      await this.db.query('ALTER TABLE usuario ADD COLUMN correo VARCHAR(120)');
+    }
+
+    this.emailColumnChecked = true;
+  }
+
+  private generarContrasenaTemporal() {
+    return `SB-${Math.floor(100000 + Math.random() * 900000)}`;
   }
 
   private isBcryptHash(value: string) {
@@ -205,14 +223,16 @@ export class AuthService {
 
   async listarUsuarios() {
     await this.ensureActiveColumn();
-    const [rows] = await this.db.query('SELECT id_usuario, nombre, apellidoP, apellidoM, rol, telefono FROM usuario WHERE activo = 1');
+    await this.ensureEmailColumn();
+    const [rows] = await this.db.query('SELECT id_usuario, nombre, apellidoP, apellidoM, rol, telefono, correo FROM usuario WHERE activo = 1');
     return Promise.all(rows.map((usuario) => this.prepararUsuario(usuario)));
   }
 
   async buscarUsuario(telefono: string) {
     await this.ensureActiveColumn();
+    await this.ensureEmailColumn();
     const [rows] = await this.db.query(
-      'SELECT id_usuario, nombre, apellidoP, apellidoM, telefono, rol FROM usuario WHERE telefono = ? AND activo = 1',
+      'SELECT id_usuario, nombre, apellidoP, apellidoM, telefono, correo, rol FROM usuario WHERE telefono = ? AND activo = 1',
       [telefono],
     );
 
@@ -225,6 +245,7 @@ export class AuthService {
 
   async registrarUsuario(payload: CreateUserDto) {
     await this.ensureActiveColumn();
+    await this.ensureEmailColumn();
     const passwordColumn = await this.getPasswordColumn();
     const [usuarios] = await this.db.query('SELECT id_usuario FROM usuario WHERE telefono = ?', [payload.telefono]);
 
@@ -235,10 +256,23 @@ export class AuthService {
       };
     }
 
+    if (payload.correo) {
+      const [correos] = await this.db.query('SELECT id_usuario FROM usuario WHERE LOWER(correo) = LOWER(?) AND activo = 1', [
+        payload.correo,
+      ]);
+
+      if (correos.length > 0) {
+        return {
+          success: false,
+          error: 'Este correo ya se encuentra registrado con otro colaborador.',
+        };
+      }
+    }
+
     const hashedPassword = await this.hashPassword(payload.contrasenia);
     const [result] = await this.db.query(
-      `INSERT INTO usuario (nombre, apellidoP, apellidoM, telefono, ${this.escapeIdentifier(passwordColumn)}, rol) VALUES (?, ?, ?, ?, ?, ?)`,
-      [payload.nombre, payload.apellidoP, payload.apellidoM || '', payload.telefono, hashedPassword, payload.rol],
+      `INSERT INTO usuario (nombre, apellidoP, apellidoM, telefono, correo, ${this.escapeIdentifier(passwordColumn)}, rol) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [payload.nombre, payload.apellidoP, payload.apellidoM || '', payload.telefono, payload.correo || null, hashedPassword, payload.rol],
     );
 
     await this.sincronizarPermisos(result.insertId, payload.privilegios || {}, payload.rol);
@@ -252,17 +286,63 @@ export class AuthService {
 
   async actualizarUsuario(idUsuario: string, payload: UpdateUserDto) {
     await this.ensureActiveColumn();
+    await this.ensureEmailColumn();
     const passwordColumn = await this.getPasswordColumn();
     const hashedPassword = await this.hashPassword(payload.contrasenia);
 
+    if (payload.correo) {
+      const [correos] = await this.db.query(
+        'SELECT id_usuario FROM usuario WHERE LOWER(correo) = LOWER(?) AND id_usuario <> ? AND activo = 1',
+        [payload.correo, idUsuario],
+      );
+
+      if (correos.length > 0) {
+        return { success: false, error: 'Este correo ya se encuentra registrado con otro colaborador.' };
+      }
+    }
+
     await this.db.query(
-      `UPDATE usuario SET nombre = ?, apellidoP = ?, apellidoM = ?, telefono = ?, ${this.escapeIdentifier(passwordColumn)} = ?, rol = ? WHERE id_usuario = ?`,
-      [payload.nombre, payload.apellidoP, payload.apellidoM || '', payload.telefono, hashedPassword, payload.rol, idUsuario],
+      `UPDATE usuario SET nombre = ?, apellidoP = ?, apellidoM = ?, telefono = ?, correo = ?, ${this.escapeIdentifier(passwordColumn)} = ?, rol = ? WHERE id_usuario = ?`,
+      [payload.nombre, payload.apellidoP, payload.apellidoM || '', payload.telefono, payload.correo || null, hashedPassword, payload.rol, idUsuario],
     );
 
     await this.sincronizarPermisos(Number(idUsuario), payload.privilegios || {}, payload.rol);
 
     return { success: true, mensaje: 'Credenciales actualizadas correctamente' };
+  }
+
+  async recuperarContrasena(metodo: 'telefono' | 'correo', identificador: string) {
+    await this.ensureActiveColumn();
+    await this.ensureEmailColumn();
+    const passwordColumn = await this.getPasswordColumn();
+    const campo = metodo === 'correo' ? 'correo' : 'telefono';
+    const valor = identificador.trim();
+
+    const [rows] = await this.db.query(
+      `SELECT id_usuario, nombre, telefono, correo FROM usuario WHERE ${campo} = ? AND activo = 1 LIMIT 1`,
+      [valor],
+    );
+
+    if (rows.length === 0) {
+      return { success: false, error: 'No encontramos un usuario activo con esos datos.' };
+    }
+
+    const contrasenaTemporal = this.generarContrasenaTemporal();
+    const hashedPassword = await this.hashPassword(contrasenaTemporal);
+
+    await this.db.query(`UPDATE usuario SET ${this.escapeIdentifier(passwordColumn)} = ? WHERE id_usuario = ?`, [
+      hashedPassword,
+      rows[0].id_usuario,
+    ]);
+
+    return {
+      success: true,
+      mensaje:
+        metodo === 'correo'
+          ? `Se envio una contrasena temporal al correo ${rows[0].correo}.`
+          : `Se envio una contrasena temporal al telefono ${rows[0].telefono}.`,
+      contrasenaTemporal,
+    };
   }
 
   async eliminarUsuario(idUsuario: string) {

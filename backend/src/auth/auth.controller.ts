@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Que
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
+import { RecoverPasswordDto } from './dto/recover-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller()
@@ -15,6 +16,11 @@ export class AuthController {
       throw new UnauthorizedException(response);
     }
     return response;
+  }
+
+  @Post('recuperar-contrasena')
+  recuperarContrasena(@Body() payload: RecoverPasswordDto) {
+    return this.authService.recuperarContrasena(payload.metodo, payload.identificador);
   }
 
   @Get('usuarios')

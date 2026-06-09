@@ -37,6 +37,7 @@ export const ControlUsuarios = () => {
         apellidoP: '',
         apellidoM: '',
         telefono: '',
+        correo: '',
         contraseña: '', 
         rol: 'Empleado'
     });
@@ -165,6 +166,7 @@ export const ControlUsuarios = () => {
             apellidoP: obtenerApellidoP(empleado),
             apellidoM: obtenerApellidoM(empleado),
             telefono: empleado.telefono || '',
+            correo: empleado.correo || '',
             contraseña: '', 
             rol: empleado.rol === 'Administrador' ? 'Administrador' : 'Empleado'
         });
@@ -410,6 +412,7 @@ export const ControlUsuarios = () => {
             apellidoP: '',
             apellidoM: '',
             telefono: '',
+            correo: '',
             contraseña: '',
             rol: 'Empleado'
         });
@@ -517,6 +520,17 @@ export const ControlUsuarios = () => {
                                 value={form.telefono} 
                                 onChange={manejarCambioInput}
                                 required
+                            />
+                        </div>
+
+                        <div className="campo-form">
+                            <label>Correo de recuperacion</label>
+                            <input
+                                type="email"
+                                name="correo"
+                                placeholder="correo@ejemplo.com"
+                                value={form.correo}
+                                onChange={manejarCambioInput}
                             />
                         </div>
 
@@ -647,6 +661,7 @@ export const ControlUsuarios = () => {
                                 <th style={{ width: '60px' }}>ID</th>
                                 <th>Nombre Completo</th>
                                 <th>Teléfono (Login)</th>
+                                <th>Correo</th>
                                 <th>Rol</th>
                                 <th style={{ width: '160px' }}>Accion</th>
                             </tr>
@@ -660,6 +675,7 @@ export const ControlUsuarios = () => {
                                             {usr.nombre} {obtenerApellidoP(usr)} {obtenerApellidoM(usr)}
                                         </td>
                                         <td>{usr.telefono}</td>
+                                        <td>{usr.correo || 'Sin correo'}</td>
                                         <td>
                                             <span className={`badge-rol ${usr.rol === 'Administrador' ? 'rol-admin' : 'rol-empleado'}`}>
                                                 {usr.rol}
@@ -687,7 +703,7 @@ export const ControlUsuarios = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5" className="tabla-vacia">
+                                    <td colSpan="6" className="tabla-vacia">
                                         No hay personal registrado en la base de datos de Stock Bloom.
                                     </td>
                                 </tr>
@@ -806,7 +822,7 @@ export const ControlUsuarios = () => {
                         <div className="modal-icono-contenedor modal-icono-alerta">!</div>
                         <h3>Eliminar usuario</h3>
                         <p>
-                            Deseas eliminar al usuario <strong>{usuarioAEliminar.nombre} {obtenerApellidoP(usuarioAEliminar)}</strong>? Se quitara su acceso, pero sus ventas historicas se conservaran para reportes.
+                            ¿Deseas eliminar al usuario <strong>{usuarioAEliminar.nombre} {obtenerApellidoP(usuarioAEliminar)}</strong>? Se quitara su acceso, pero sus ventas historicas se conservaran para reportes.
                         </p>
                         <div className="modal-acciones-confirmacion">
                             <button type="button" className="modal-boton-cancelar" onClick={() => setUsuarioAEliminar(null)}>
@@ -848,4 +864,3 @@ export const ControlUsuarios = () => {
         </div>
     );
 };
-

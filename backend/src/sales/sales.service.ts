@@ -120,6 +120,44 @@ export class SalesService {
     };
   }
 
+  async eliminarVenta(idVenta: string) {
+    const connection = await this.db.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const [ventas] = await connection.query('SELECT id_venta FROM venta WHERE id_venta = ? LIMIT 1', [idVenta]);
+
+      if (ventas.length === 0) {
+        await connection.rollback();
+        return { success: false, statusCode: 404, error: 'La venta no existe o ya fue eliminada.' };
+      }
+
+      const [detalles] = await connection.query(
+        'SELECT id_planta, cantidad FROM detalle_venta WHERE id_venta = ?',
+        [idVenta],
+      );
+
+      for (const detalle of detalles as any[]) {
+        await connection.query('UPDATE planta SET stock = stock + ? WHERE id_planta = ?', [
+          detalle.cantidad,
+          detalle.id_planta,
+        ]);
+      }
+
+      await connection.query('DELETE FROM detalle_venta WHERE id_venta = ?', [idVenta]);
+      await connection.query('DELETE FROM venta WHERE id_venta = ?', [idVenta]);
+
+      await connection.commit();
+      return { success: true, mensaje: `Venta #${idVenta} eliminada correctamente. El corte del dia fue actualizado.` };
+    } catch (err) {
+      await connection.rollback();
+      throw err;
+    } finally {
+      connection.release();
+    }
+  }
+
   async listarVentasPorEmpleado(inicio?: string, fin?: string) {
     const { fechaInicio, fechaFin } = this.getRangoFechas(inicio, fin);
 

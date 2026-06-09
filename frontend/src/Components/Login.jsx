@@ -6,6 +6,11 @@ export const Login = ({ onLoginSuccess }) => {
     const [telefono, setTelefono] = useState('');
     const [contrasena, setContrasena] = useState('');
     const [error, setError] = useState('');
+    const [modoRecuperacion, setModoRecuperacion] = useState(false);
+    const [metodoRecuperacion, setMetodoRecuperacion] = useState('telefono');
+    const [identificadorRecuperacion, setIdentificadorRecuperacion] = useState('');
+    const [mensajeRecuperacion, setMensajeRecuperacion] = useState(null);
+    const [cargandoRecuperacion, setCargandoRecuperacion] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,6 +23,39 @@ export const Login = ({ onLoginSuccess }) => {
             }
         } catch (err) {
             setError('Error al conectar con el servidor');
+        }
+    };
+
+    const handleRecuperarContrasena = async (e) => {
+        e.preventDefault();
+        setError('');
+        setMensajeRecuperacion(null);
+        setCargandoRecuperacion(true);
+
+        try {
+            const data = await ApiStockBloom.recuperarContrasena(metodoRecuperacion, identificadorRecuperacion);
+
+            if (data.success) {
+                setMensajeRecuperacion({
+                    tipo: 'exito',
+                    texto: data.mensaje,
+                    contrasenaTemporal: data.contrasenaTemporal
+                });
+                setContrasena('');
+                if (metodoRecuperacion === 'telefono') setTelefono(identificadorRecuperacion);
+            } else {
+                setMensajeRecuperacion({
+                    tipo: 'error',
+                    texto: data.error || data.message || 'No se pudo recuperar la contraseña.'
+                });
+            }
+        } catch (err) {
+            setMensajeRecuperacion({
+                tipo: 'error',
+                texto: 'Error al conectar con el servidor'
+            });
+        } finally {
+            setCargandoRecuperacion(false);
         }
     };
 
@@ -38,11 +76,15 @@ export const Login = ({ onLoginSuccess }) => {
                 <div style={formPanelStyle}>
                     <div style={formHeaderStyle}>
                         <span style={badgeStyle}>Acceso interno</span>
-                        <h2 style={formTitleStyle}>👋 Bienvenido</h2>
-                        <p style={formSubtitleStyle}>Ingresa tus credenciales para continuar.</p>
+                        <h2 style={formTitleStyle}>{modoRecuperacion ? 'Recuperar acceso' : 'Bienvenido'}</h2>
+                        <p style={formSubtitleStyle}>
+                            {modoRecuperacion
+                                ? 'Elige como quieres recibir una contraseña temporal.'
+                                : 'Ingresa tus credenciales para continuar.'}
+                        </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} style={formStyle}>
+                    <form onSubmit={handleSubmit} style={{ ...formStyle, display: modoRecuperacion ? 'none' : 'flex' }}>
                         <div style={inputGroupStyle}>
                             <label style={labelStyle}>Usuario</label>
                             <input
@@ -70,7 +112,75 @@ export const Login = ({ onLoginSuccess }) => {
                         {error && <p style={errorStyle}>{error}</p>}
 
                         <button type="submit" style={buttonStyle}>Ingresar</button>
+                        <button type="button" style={linkButtonStyle} onClick={() => setModoRecuperacion(true)}>
+                            Olvide mi contraseña
+                        </button>
                     </form>
+
+                    {modoRecuperacion && (
+                        <form onSubmit={handleRecuperarContrasena} style={formStyle}>
+                            <div style={recoveryOptionsStyle}>
+                                <label style={recoveryOptionStyle}>
+                                    <input
+                                        type="radio"
+                                        name="metodoRecuperacion"
+                                        value="telefono"
+                                        checked={metodoRecuperacion === 'telefono'}
+                                        onChange={(e) => setMetodoRecuperacion(e.target.value)}
+                                    />
+                                    Telefono
+                                </label>
+                                <label style={recoveryOptionStyle}>
+                                    <input
+                                        type="radio"
+                                        name="metodoRecuperacion"
+                                        value="correo"
+                                        checked={metodoRecuperacion === 'correo'}
+                                        onChange={(e) => setMetodoRecuperacion(e.target.value)}
+                                    />
+                                    Correo
+                                </label>
+                            </div>
+
+                            <div style={inputGroupStyle}>
+                                <label style={labelStyle}>{metodoRecuperacion === 'correo' ? 'Correo registrado' : 'Telefono registrado'}</label>
+                                <input
+                                    type={metodoRecuperacion === 'correo' ? 'email' : 'tel'}
+                                    placeholder={metodoRecuperacion === 'correo' ? 'correo@ejemplo.com' : '7120000000'}
+                                    value={identificadorRecuperacion}
+                                    onChange={(e) => setIdentificadorRecuperacion(e.target.value)}
+                                    style={inputStyle}
+                                    required
+                                />
+                            </div>
+
+                            {mensajeRecuperacion && (
+                                <div style={mensajeRecuperacion.tipo === 'exito' ? successStyle : errorStyle}>
+                                    <p style={messageTextStyle}>{mensajeRecuperacion.texto}</p>
+                                    {mensajeRecuperacion.contrasenaTemporal && (
+                                        <strong style={temporaryPasswordStyle}>
+                                            Contrasena temporal: {mensajeRecuperacion.contrasenaTemporal}
+                                        </strong>
+                                    )}
+                                </div>
+                            )}
+
+                            <button type="submit" style={buttonStyle} disabled={cargandoRecuperacion}>
+                                {cargandoRecuperacion ? 'Generando...' : 'Enviar contrasena temporal'}
+                            </button>
+                            <button
+                                type="button"
+                                style={secondaryButtonStyle}
+                                onClick={() => {
+                                    setModoRecuperacion(false);
+                                    setMensajeRecuperacion(null);
+                                    setError('');
+                                }}
+                            >
+                                Volver al inicio de sesion
+                            </button>
+                        </form>
+                    )}
                 </div>
             </section>
         </main>
@@ -236,6 +346,30 @@ const errorStyle = {
     fontWeight: 700
 };
 
+const successStyle = {
+    margin: 0,
+    padding: '12px 13px',
+    borderRadius: '12px',
+    background: '#D6E9CD',
+    color: '#2E5E3E',
+    fontSize: '13px',
+    fontWeight: 700,
+    border: '1px solid #A8C98A'
+};
+
+const messageTextStyle = {
+    margin: '0 0 8px'
+};
+
+const temporaryPasswordStyle = {
+    display: 'block',
+    padding: '10px 12px',
+    borderRadius: '8px',
+    background: '#FFF8E5',
+    color: '#7A3E1E',
+    fontSize: '14px'
+};
+
 const buttonStyle = {
     marginTop: '4px',
     padding: '15px',
@@ -247,4 +381,45 @@ const buttonStyle = {
     fontSize: '15px',
     cursor: 'pointer',
     boxShadow: '0 12px 24px rgba(95, 164, 90, 0.28)'
+};
+
+const linkButtonStyle = {
+    border: 'none',
+    background: 'transparent',
+    color: '#2E5E3E',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 800,
+    textDecoration: 'underline'
+};
+
+const secondaryButtonStyle = {
+    padding: '13px',
+    borderRadius: '10px',
+    border: '1px solid #A8C98A',
+    background: '#FFF8E5',
+    color: '#2E5E3E',
+    cursor: 'pointer',
+    fontWeight: 800
+};
+
+const recoveryOptionsStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: '10px'
+};
+
+const recoveryOptionStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    minHeight: '44px',
+    borderRadius: '10px',
+    border: '1px solid rgba(46, 94, 62, 0.22)',
+    background: '#FFFFFF',
+    color: '#2E5E3E',
+    fontSize: '14px',
+    fontWeight: 800,
+    cursor: 'pointer'
 };
