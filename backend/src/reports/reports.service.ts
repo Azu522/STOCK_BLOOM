@@ -194,7 +194,7 @@ const filtroUsuarioSql = idUsuario
         COALESCE(SUM(vu.total_unidades), 0) AS total_unidades,
         COALESCE(SUM(v.total), 0) AS total_importe
        FROM usuario u
-       LEFT JOIN venta v ON u.id_usuario = v.id_usuario AND DATE(v.fecha) BETWEEN ? AND ?
+       ${idUsuario ? 'LEFT JOIN' : 'INNER JOIN'} venta v ON u.id_usuario = v.id_usuario AND DATE(v.fecha) BETWEEN ? AND ?
        LEFT JOIN (
          SELECT id_venta, SUM(cantidad) AS total_unidades
          FROM detalle_venta
