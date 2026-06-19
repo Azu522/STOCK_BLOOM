@@ -193,12 +193,12 @@ const filtroUsuarioSql = idUsuario
         COUNT(v.id_venta) AS total_ventas,
         COALESCE(SUM(vu.total_unidades), 0) AS total_unidades,
         COALESCE(SUM(v.total), 0) AS total_importe
-       FROM usuario u
-       ${idUsuario ? 'LEFT JOIN' : 'INNER JOIN'} venta v ON u.id_usuario = v.id_usuario AND DATE(v.fecha) BETWEEN ? AND ?
-       LEFT JOIN (
-         SELECT id_venta, SUM(cantidad) AS total_unidades
-         FROM detalle_venta
-         GROUP BY id_venta
+        FROM usuario u
+        ${idUsuario ? 'LEFT JOIN' : 'INNER JOIN'} venta v ON u.id_usuario = v.id_usuario AND DATE(v.fecha) BETWEEN ? AND ?
+        LEFT JOIN (
+        SELECT id_venta, SUM(cantidad) AS total_unidades
+        FROM detalle_venta
+        GROUP BY id_venta
        ) vu ON v.id_venta = vu.id_venta
        ${filtroUsuarioSql}
        GROUP BY u.id_usuario, empleado, u.rol
